@@ -12,15 +12,37 @@ public class Employee {
 
     private String email;
 
-    private String firstName;
+    private String name;
 
-    private String lastName;
-
+    @Enumerated(EnumType.ORDINAL)
     private EmployeeStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private Designation designation;
+
+    private EmployeeType employeeType;
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime modifiedBy;
+    private LocalDateTime modifiedAt;
+
+    private Employee(String email, String name, Designation designation, EmployeeType employeeType){
+        this.email = email;
+        this.name = name;
+        this.designation = designation;
+        this.employeeType = employeeType;
+    }
+
+    @PrePersist
+    public void onPrePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onPreUpdate() {
+        this.modifiedAt = LocalDateTime.now();
+    }
 
     @ManyToOne
     private Company company;
@@ -30,5 +52,9 @@ public class Employee {
 
     @OneToOne
     private Profile profile;
+
+    public static Employee of(String email, String name, Designation designation, EmployeeType employeeType) {
+        return new Employee(email, name, designation, employeeType);
+    }
 
 }

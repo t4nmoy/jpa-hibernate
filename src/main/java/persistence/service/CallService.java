@@ -20,7 +20,6 @@ public class CallService {
 
     public Call save(LocalDateTime startTime) {
         Call call = new Call();
-        call.setStartTime(LocalDateTime.now());
         return repository.save(call);
     }
 
