@@ -1,12 +1,9 @@
 package persistence.entity;
 
-import javax.persistence.*;
+
+import javax.persistence.Entity;
 
 @Entity
-public class Call {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Call extends LongIdEntity {
 
 }

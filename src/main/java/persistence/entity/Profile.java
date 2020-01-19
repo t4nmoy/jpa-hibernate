@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Profile {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Profile extends LongIdEntity {
 
     private Gender gender;
 

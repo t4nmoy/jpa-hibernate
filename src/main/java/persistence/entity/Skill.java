@@ -1,4 +1,7 @@
 package persistence.entity;
 
-public class Skill {
+import javax.persistence.Entity;
+
+@Entity
+public class Skill extends LongIdEntity {
 }

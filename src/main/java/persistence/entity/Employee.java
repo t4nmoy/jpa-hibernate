@@ -4,11 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Employee {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Employee extends LongIdEntity {
 
     private String email;
 
@@ -26,12 +22,14 @@ public class Employee {
 
     private LocalDateTime modifiedAt;
 
-    private Employee(String email, String name, Designation designation, EmployeeType employeeType){
-        this.email = email;
-        this.name = name;
-        this.designation = designation;
-        this.employeeType = employeeType;
-    }
+    @ManyToOne
+    private Company company;
+
+    @ManyToOne
+    private Department department;
+
+    @OneToOne
+    private Profile profile;
 
     @PrePersist
     public void onPrePersist() {
@@ -44,14 +42,16 @@ public class Employee {
         this.modifiedAt = LocalDateTime.now();
     }
 
-    @ManyToOne
-    private Company company;
+    public Employee() {
 
-    @ManyToOne
-    private Department department;
+    }
 
-    @OneToOne
-    private Profile profile;
+    private Employee(String email, String name, Designation designation, EmployeeType employeeType){
+        this.email = email;
+        this.name = name;
+        this.designation = designation;
+        this.employeeType = employeeType;
+    }
 
     public static Employee of(String email, String name, Designation designation, EmployeeType employeeType) {
         return new Employee(email, name, designation, employeeType);

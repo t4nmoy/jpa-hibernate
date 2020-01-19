@@ -2,13 +2,16 @@ package persistence.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import persistence.entity.Designation;
 import persistence.entity.Employee;
 import persistence.entity.EmployeeType;
 import persistence.repository.EmployeeRepository;
 
-import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -27,5 +30,14 @@ public class EmployeeService {
         return employeeRepository.save(emp);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Employee> findAll(Pageable pageable) {
+        return employeeRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
 
 }
