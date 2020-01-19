@@ -33,7 +33,7 @@ public class Company extends LongIdEntity {
     @Override
     public String toString() {
         return "Company{" +
-                "id='" + getId() + '\'' +
+                "id='" + this.getId() + '\'' +
                 "name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 '}';

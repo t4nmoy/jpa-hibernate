@@ -57,4 +57,13 @@ public class Employee extends LongIdEntity {
         return new Employee(email, name, designation, employeeType);
     }
 
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id='" + this.getId() + '\'' +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

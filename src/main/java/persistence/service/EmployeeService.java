@@ -11,7 +11,7 @@ import persistence.entity.Employee;
 import persistence.entity.EmployeeType;
 import persistence.repository.EmployeeRepository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -26,18 +26,33 @@ public class EmployeeService {
     }
 
     public Employee save(String email, String name, Designation designation, EmployeeType employeeType) {
-        Employee emp = Employee.of(email, name, designation, employeeType);
-        return employeeRepository.save(emp);
+        Employee employee = Employee.of(email, name, designation, employeeType);
+        employee =  employeeRepository.save(employee);
+        logger.debug("new employee saved : {}", employee);
+        return employee;
+    }
+
+    public Employee update(Employee employee) {
+        logger.debug("request to update employee : {}", employee);
+        return employeeRepository.save(employee);
     }
 
     @Transactional(readOnly = true)
     public Page<Employee> findAll(Pageable pageable) {
+        logger.debug("request to all employees");
         return employeeRepository.findAll(pageable);
     }
 
+
     @Transactional(readOnly = true)
-    public List<Employee> findAll() {
-        return employeeRepository.findAll();
+    public Optional findOne(Long id) {
+        logger.info("request to get employee with id : {}", id);
+        return employeeRepository.findById(id);
+    }
+
+    public void delete(Long id) {
+        logger.debug("request to delete employee with id : {}", id);
+        employeeRepository.deleteById(id);
     }
 
 }
