@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "email" }))
 public class Employee extends LongIdEntity {
 
     private String email;
@@ -55,6 +56,58 @@ public class Employee extends LongIdEntity {
 
     public static Employee of(String email, String name, Designation designation, EmployeeType employeeType) {
         return new Employee(email, name, designation, employeeType);
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public EmployeeStatus getStatus() {
+        return status;
+    }
+
+    public Designation getDesignation() {
+        return designation;
+    }
+
+    public EmployeeType getEmployeeType() {
+        return employeeType;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setStatus(EmployeeStatus status) {
+        this.status = status;
+    }
+
+    public void setDesignation(Designation designation) {
+        this.designation = designation;
+    }
+
+    public void setEmployeeType(EmployeeType employeeType) {
+        this.employeeType = employeeType;
     }
 
     @Override

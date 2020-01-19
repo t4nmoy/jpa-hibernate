@@ -45,7 +45,7 @@ public class EmployeeService {
 
 
     @Transactional(readOnly = true)
-    public Optional findOne(Long id) {
+    public Optional<Employee> findOne(Long id) {
         logger.info("request to get employee with id : {}", id);
         return employeeRepository.findById(id);
     }

@@ -2,12 +2,16 @@ package persistence.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.util.List;
 
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "code" })})
 public class Company extends LongIdEntity {
 
     private String name;
+
 
     private String code;
 
@@ -34,8 +38,9 @@ public class Company extends LongIdEntity {
     public String toString() {
         return "Company{" +
                 "id='" + this.getId() + '\'' +
-                "name='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", code='" + code + '\'' +
+                ", companyType='" + companyType + '\'' +
                 '}';
     }
 }

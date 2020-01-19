@@ -12,7 +12,9 @@ import persistence.entity.Employee;
 import persistence.entity.EmployeeType;
 import persistence.service.EmployeeService;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class EmployeeServiceTests {
@@ -22,21 +24,41 @@ class EmployeeServiceTests {
 	@Autowired
 	private EmployeeService employeeService;
 
+	@Autowired
+	private AppTestData appTestData;
+
+
+
 	@BeforeEach
 	public void setup() {
+		appTestData.apply();
 	}
 
 	@Test
 	@Transactional
 	void curdEmployee() {
-		Employee employee = employeeService.save("bob@wonderland.org", "bob", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
-		assertNotNull(employee);
-	}
+		Employee employee = employeeService.save("john@wonderland.org", "john", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
 
+		assertNotNull(employee);
+		assertNotNull(employee.getId());
+		assertEquals("john@wonderland.org", employee.getEmail());
+
+		EmployeeType oldType = employee.getEmployeeType();
+		EmployeeType newType = EmployeeType.anyWithout(oldType);
+		employee.setEmployeeType(newType);
+		employeeService.update(employee);
+
+		Optional<Employee> emp = employeeService.findOne(employee.getId());
+		assertTrue(emp.isPresent());
+
+		assertEquals(newType, employee.getEmployeeType());
+
+	}
 
 	@Test
 	@Transactional
 	public void test2() {
+
 	}
 
 }

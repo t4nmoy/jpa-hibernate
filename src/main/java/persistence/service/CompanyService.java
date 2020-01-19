@@ -49,6 +49,10 @@ public class CompanyService {
         return companyRepository.findById(id);
     }
 
+    public Optional<Company> findByCode(String code) {
+        return companyRepository.findByCode(code);
+    }
+
     public void delete(Long id) {
         logger.debug("request to delete company with id : {}", id);
         companyRepository.deleteById(id);
