@@ -5,15 +5,21 @@ import java.util.stream.Collectors;
 
 public enum EmployeeType {
 
-    PERMANENT(100), PART_TIME(101), INTERN(102), ON_PROBATION(103);
+    PERMANENT(Short.valueOf("100")),
 
-    private Integer type;
+    PART_TIME(Short.valueOf("101")),
 
-    EmployeeType(Integer type) {
+    INTERN(Short.valueOf("102")),
+
+    ON_PROBATION(Short.valueOf("103"));
+
+    private Short type;
+
+    EmployeeType(Short type) {
         this.type = type;
     }
 
-    public Integer getCode() {
+    public Short getCode() {
         return this.type;
     }
 

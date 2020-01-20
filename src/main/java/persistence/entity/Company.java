@@ -1,9 +1,6 @@
 package persistence.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -12,12 +9,16 @@ public class Company extends LongIdEntity {
 
     private String name;
 
-
     private String code;
 
     private CompanyType companyType;
 
-    @OneToMany
+    @OneToMany(
+            mappedBy = "company",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Employee> employees;
 
     public Company() {

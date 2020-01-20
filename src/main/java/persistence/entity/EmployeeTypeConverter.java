@@ -5,10 +5,10 @@ import javax.persistence.Converter;
 import java.util.stream.Stream;
 
 @Converter(autoApply = true)
-public class EmployeeTypeConverter implements AttributeConverter<EmployeeType, Integer> {
+public class EmployeeTypeConverter implements AttributeConverter<EmployeeType, Short> {
 
     @Override
-    public Integer convertToDatabaseColumn(EmployeeType employeeType) {
+    public Short convertToDatabaseColumn(EmployeeType employeeType) {
         if (employeeType == null) {
             return null;
         }
@@ -16,7 +16,7 @@ public class EmployeeTypeConverter implements AttributeConverter<EmployeeType, I
     }
 
     @Override
-    public EmployeeType convertToEntityAttribute(Integer code) {
+    public EmployeeType convertToEntityAttribute(Short code) {
         if (code == null){
             return null;
         }
