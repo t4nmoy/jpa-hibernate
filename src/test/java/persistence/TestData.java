@@ -14,13 +14,21 @@ import java.util.stream.IntStream;
 
 @Service
 @Transactional
-public class AppTestData {
+public class TestData {
 
     @Autowired
     private CompanyService companyService;
 
     @Autowired
     private EmployeeService employeeService;
+
+    private Employee bob;
+
+    private Employee alice;
+
+    private Employee mark;
+
+    private Employee tom;
 
     public void apply() {
         createCompanies();
@@ -31,7 +39,7 @@ public class AppTestData {
 
         companyService.save("root", "root company", CompanyType.PROVIDER);
 
-        IntStream.range(0, 50)
+        IntStream.range(0, 5)
                 .forEach(value -> {
                     String code = String.valueOf(value);
                     String name = String.format("name-%s", value);
@@ -41,12 +49,12 @@ public class AppTestData {
     }
 
     public void createEmployees() {
-        employeeService.save("bob@wonderland.org", "bob", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
-        employeeService.save("alice@wonderland.org", "alice", Designation.HR_MANAGER, EmployeeType.PERMANENT);
-        employeeService.save("mark@wonderland.com", "mark", Designation.TEAM_LEAD, EmployeeType.PERMANENT);
-        employeeService.save("tom@gmail.org", "tom", Designation.PROJECT_MANAGER, EmployeeType.ON_PROBATION);
+        this.bob = employeeService.save("bob@wonderland.org", "bob", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
+        this.alice = employeeService.save("alice@wonderland.org", "alice", Designation.HR_MANAGER, EmployeeType.PERMANENT);
+        this.mark = employeeService.save("mark@wonderland.com", "mark", Designation.TEAM_LEAD, EmployeeType.PERMANENT);
+        this.tom = employeeService.save("tom@gmail.org", "tom", Designation.PROJECT_MANAGER, EmployeeType.ON_PROBATION);
 
-        IntStream.range(0, 50)
+        IntStream.range(0, 5)
                 .forEach(value -> {
                     String email = String.format("%s@gmail.org", value);
                     String name = String.valueOf(value);
@@ -54,5 +62,21 @@ public class AppTestData {
                     EmployeeType employeeType = EmployeeType.values()[value % 4];
                     employeeService.save(email, name, designation, employeeType);
                 });
+    }
+
+    public Employee getBob() {
+        return this.bob;
+    }
+
+    public Employee getAlice() {
+        return this.alice;
+    }
+
+    public Employee getMark() {
+        return this.mark;
+    }
+
+    public Employee getTom() {
+        return this.tom;
     }
 }

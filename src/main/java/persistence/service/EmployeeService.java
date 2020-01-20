@@ -43,7 +43,6 @@ public class EmployeeService {
         return employeeRepository.findAll(pageable);
     }
 
-
     @Transactional(readOnly = true)
     public Optional<Employee> findOne(Long id) {
         logger.info("request to get employee with id : {}", id);

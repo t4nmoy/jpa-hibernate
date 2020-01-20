@@ -1,5 +1,7 @@
 package persistence.entity;
 
+import javax.persistence.Entity;
 
-public class Address {
+@Entity
+public class Address extends LongIdEntity {
 }

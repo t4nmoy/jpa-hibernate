@@ -11,6 +11,8 @@ import persistence.entity.Company;
 import persistence.entity.CompanyType;
 import persistence.repository.CompanyRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Service
@@ -24,6 +26,9 @@ public class CompanyService {
     public CompanyService(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Company save(String code, String name, CompanyType companyType) {
         Company company = Company.of(code, name, companyType);
@@ -49,6 +54,7 @@ public class CompanyService {
         return companyRepository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Company> findByCode(String code) {
         return companyRepository.findByCode(code);
     }
@@ -56,5 +62,12 @@ public class CompanyService {
     public void delete(Long id) {
         logger.debug("request to delete company with id : {}", id);
         companyRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Company findMust(Long id) {
+        logger.info("request to must get company with id : {}", id);
+        entityManager.flush();
+        return companyRepository.findById(id).get();
     }
 }

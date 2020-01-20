@@ -7,11 +7,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import persistence.entity.Company;
 import persistence.entity.Designation;
 import persistence.entity.Employee;
 import persistence.entity.EmployeeType;
+import persistence.service.CompanyService;
 import persistence.service.EmployeeService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,18 +29,22 @@ class EmployeeServiceTests {
 	private EmployeeService employeeService;
 
 	@Autowired
-	private AppTestData appTestData;
+	private CompanyService companyService;
 
+	@Autowired
+	private TestData testData;
 
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@BeforeEach
 	public void setup() {
-		appTestData.apply();
+		testData.apply();
 	}
 
 	@Test
 	@Transactional
-	void curdEmployee() {
+	void curdEmployeeTest() {
 		Employee employee = employeeService.save("john@wonderland.org", "john", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
 
 		assertNotNull(employee);
@@ -57,7 +65,36 @@ class EmployeeServiceTests {
 
 	@Test
 	@Transactional
-	public void test2() {
+	public void testEmployeeCompanyRelationship() {
+		Optional<Company> company = companyService.findByCode(Company.ROOT_COMPANY);
+		assertTrue(company.isPresent());
+
+		company.map(rootCompany -> {
+			Employee alice = employeeService.findOne(testData.getAlice().getId()).get();
+			Employee bob = employeeService.findOne(testData.getBob().getId()).get();
+
+//			alice.setCompany(rootCompany);
+//			employeeService.update(alice);
+//
+//			bob.setCompany(rootCompany);
+//			employeeService.update(bob);
+
+			rootCompany.getEmployees().add(alice);
+			rootCompany.getEmployees().add(bob);
+
+			companyService.update(rootCompany);
+
+			return rootCompany;
+		});
+
+		entityManager.flush();
+
+
+		logger.info("fetching root company ");
+
+		Company rootCompany = companyService.findOne(company.get().getId()).get();
+		assertNotNull(rootCompany);
+		assertEquals(2, rootCompany.getEmployees().size());
 
 	}
 

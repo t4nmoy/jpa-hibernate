@@ -24,7 +24,7 @@ public class CompanyServiceTests {
     private CompanyService companyService;
 
     @Autowired
-    private AppTestData appTestData;
+    private TestData appTestData;
 
     @BeforeEach
     public void setup() {

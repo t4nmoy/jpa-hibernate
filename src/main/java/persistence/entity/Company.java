@@ -1,11 +1,14 @@
 package persistence.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "code" })})
 public class Company extends LongIdEntity {
+
+    public static final String ROOT_COMPANY = "root";
 
     private String name;
 
@@ -15,11 +18,10 @@ public class Company extends LongIdEntity {
 
     @OneToMany(
             mappedBy = "company",
-            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Employee> employees;
+    private List<Employee> employees = new ArrayList<>();
 
     public Company() {
 
@@ -33,6 +35,14 @@ public class Company extends LongIdEntity {
 
     public static Company of(String code, String name, CompanyType companyType) {
         return new Company(code, name, companyType);
+    }
+
+    public CompanyType getCompanyType() {
+        return companyType;
+    }
+
+    public List<Employee> getEmployees() {
+        return employees;
     }
 
     @Override

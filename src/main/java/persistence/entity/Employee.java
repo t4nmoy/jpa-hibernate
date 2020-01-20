@@ -40,7 +40,7 @@ public class Employee extends LongIdEntity {
 
     private LocalDateTime modifiedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 
@@ -86,6 +86,10 @@ public class Employee extends LongIdEntity {
 
     public void setEmployeeType(EmployeeType employeeType) {
         this.employeeType = employeeType;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Override
