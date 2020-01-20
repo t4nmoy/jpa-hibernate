@@ -60,7 +60,6 @@ class EmployeeServiceTests {
 		assertTrue(emp.isPresent());
 
 		assertEquals(newType, employee.getEmployeeType());
-
 	}
 
 	@Test
@@ -73,26 +72,19 @@ class EmployeeServiceTests {
 			Employee alice = employeeService.findOne(testData.getAlice().getId()).get();
 			Employee bob = employeeService.findOne(testData.getBob().getId()).get();
 
-//			alice.setCompany(rootCompany);
-//			employeeService.update(alice);
-//
-//			bob.setCompany(rootCompany);
-//			employeeService.update(bob);
+			alice.setCompany(rootCompany);
+			employeeService.update(alice);
 
-			rootCompany.getEmployees().add(alice);
-			rootCompany.getEmployees().add(bob);
-
-			companyService.update(rootCompany);
+			bob.setCompany(rootCompany);
+			employeeService.update(bob);
 
 			return rootCompany;
 		});
 
 		entityManager.flush();
+		entityManager.clear();
 
-
-		logger.info("fetching root company ");
-
-		Company rootCompany = companyService.findOne(company.get().getId()).get();
+		Company rootCompany = companyService.findMust(company.get().getId());
 		assertNotNull(rootCompany);
 		assertEquals(2, rootCompany.getEmployees().size());
 

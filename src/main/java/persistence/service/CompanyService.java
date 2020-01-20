@@ -67,7 +67,6 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public Company findMust(Long id) {
         logger.info("request to must get company with id : {}", id);
-        entityManager.flush();
         return companyRepository.findById(id).get();
     }
 }

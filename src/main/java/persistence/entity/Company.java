@@ -18,6 +18,7 @@ public class Company extends LongIdEntity {
 
     @OneToMany(
             mappedBy = "company",
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
