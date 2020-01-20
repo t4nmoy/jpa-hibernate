@@ -1,6 +1,5 @@
 package persistence.service;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,8 +10,6 @@ import persistence.entity.Company;
 import persistence.entity.CompanyType;
 import persistence.repository.CompanyRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Service
@@ -26,9 +23,6 @@ public class CompanyService {
     public CompanyService(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public Company save(String code, String name, CompanyType companyType) {
         Company company = Company.of(code, name, companyType);
@@ -44,7 +38,7 @@ public class CompanyService {
 
     @Transactional(readOnly = true)
     public Page<Company> findAll(Pageable pageable) {
-        logger.debug("request to get all companies");
+        logger.debug("request to get all companies with paging: {}", pageable);
         return companyRepository.findAll(pageable);
     }
 
@@ -67,6 +61,6 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public Company findMust(Long id) {
         logger.info("request to must get company with id : {}", id);
-        return companyRepository.findById(id).get();
+        return companyRepository.findMust(id);
     }
 }

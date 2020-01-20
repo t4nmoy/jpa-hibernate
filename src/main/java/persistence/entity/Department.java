@@ -1,7 +1,9 @@
 package persistence.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.util.List;
 
 @Entity
 public class Department extends LongIdEntity {
@@ -13,6 +15,9 @@ public class Department extends LongIdEntity {
 
     @OneToOne(optional = false)
     private Company company;
+
+    @OneToMany(mappedBy = "department")
+    private List<Employee> employees;
 
     public Department() {
 

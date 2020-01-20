@@ -14,11 +14,14 @@ public class Company extends LongIdEntity {
 
     private String code;
 
+    /**
+     * use {@link CompanyTypeConverter} for enum type conversion
+     */
     private CompanyType companyType;
 
     @OneToMany(
             mappedBy = "company",
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
@@ -44,6 +47,12 @@ public class Company extends LongIdEntity {
 
     public List<Employee> getEmployees() {
         return employees;
+    }
+
+    public void addEmployee(Employee employee) {
+        if (!employees.contains(employee)) {
+            employees.add(employee);
+        }
     }
 
     @Override

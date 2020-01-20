@@ -1,0 +1,22 @@
+select employees0_.company_id as company10_6_0_, employees0_.id as id1_6_0_, employees0_.id
+as id1_6_1_, employees0_.version as version2_6_1_, employees0_.company_id as company10_6_1_,
+employees0_.created_at as created_3_6_1_, employees0_.department_id as departm11_6_1_,
+employees0_.designation as designat4_6_1_, employees0_.email as email5_6_1_, employees0_.employee_type as employee6_6_1_,
+employees0_.modified_at as modified7_6_1_, employees0_.name as name8_6_1_, employees0_.profile_id as profile12_6_1_,
+employees0_.status as status9_6_1_, department1_.id as id1_4_2_, department1_.version as version2_4_2_,
+department1_.company_id as company_4_4_2_, department1_.manager_id as manager_5_4_2_, department1_.title as title3_4_2_,
+company2_.id as id1_2_3_, company2_.version as version2_2_3_, company2_.code as code3_2_3_,
+company2_.company_type as company_4_2_3_, company2_.name as name5_2_3_, employee3_.id as id1_6_4_,
+employee3_.version as version2_6_4_, employee3_.company_id as company10_6_4_, employee3_.created_at as created_3_6_4_,
+employee3_.department_id as departm11_6_4_, employee3_.designation as designat4_6_4_, employee3_.email as email5_6_4_,
+employee3_.employee_type as employee6_6_4_, employee3_.modified_at as modified7_6_4_, employee3_.name as name8_6_4_,
+employee3_.profile_id as profile12_6_4_, employee3_.status as status9_6_4_, profile4_.id as id1_8_5_, profile4_.version as version2_8_5_,
+profile4_.employee_id as employee5_8_5_, profile4_.gender as gender3_8_5_, profile4_.notes as notes4_8_5_, employee5_.id as id1_6_6_,
+employee5_.version as version2_6_6_, employee5_.company_id as company10_6_6_, employee5_.created_at as created_3_6_6_,
+employee5_.department_id as departm11_6_6_, employee5_.designation as designat4_6_6_, employee5_.email as email5_6_6_,
+employee5_.employee_type as employee6_6_6_, employee5_.modified_at as modified7_6_6_, employee5_.name as name8_6_6_,
+employee5_.profile_id as profile12_6_6_, employee5_.status as status9_6_6_
+from employee employees0_ left outer join department department1_ on employees0_.department_id=department1_.id left outer join company company2_
+on department1_.company_id=company2_.id left outer join employee employee3_ on department1_.manager_id=employee3_.id
+left outer join profile profile4_ on employee3_.profile_id=profile4_.id left outer join employee employee5_
+on profile4_.employee_id=employee5_.id where employees0_.company_id=?

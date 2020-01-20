@@ -36,9 +36,7 @@ public class TestData {
     }
 
     public void createCompanies() {
-
         companyService.save("root", "root company", CompanyType.PROVIDER);
-
         IntStream.range(0, 5)
                 .forEach(value -> {
                     String code = String.valueOf(value);
