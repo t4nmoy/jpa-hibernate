@@ -54,4 +54,10 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
+    public Employee findMust(Long id) {
+        logger.info("request to must get employee with id : {}", id);
+        return employeeRepository.findMust(id);
+    }
+
 }

@@ -65,8 +65,8 @@ class EmployeeServiceTests {
 		assertTrue(company.isPresent());
 
 		company.map(rootCompany -> {
-			Employee alice = employeeService.findOne(testData.getAlice().getId()).get();
-			Employee bob = employeeService.findOne(testData.getBob().getId()).get();
+			Employee alice = employeeService.findMust(testData.getAlice().getId());
+			Employee bob = employeeService.findMust(testData.getBob().getId());
 
 			alice.setCompany(rootCompany);
 			employeeService.update(alice);
