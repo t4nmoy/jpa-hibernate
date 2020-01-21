@@ -1,5 +1,7 @@
 package persistence.entity;
 
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class Company extends LongIdEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @BatchSize(size = 10)
     private List<Employee> employees = new ArrayList<>();
 
     public Company() {

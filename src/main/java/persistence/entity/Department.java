@@ -1,5 +1,8 @@
 package persistence.entity;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -16,16 +19,26 @@ public class Department extends LongIdEntity {
     @OneToOne(optional = false)
     private Company company;
 
+    /**
+     * if any entity graph needs to contain more than one <code>EAGER</code> collections
+     * then {@link LazyCollection} annotation is needed
+     */
     @OneToMany(mappedBy = "department")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Employee> employees;
 
     public Department() {
 
     }
 
-    public Department(String title, Company company) {
+    private Department(String title, Company company) {
         this.title = title;
         this.company = company;
+    }
+
+    private Department(String title, Employee manager, Company company) {
+        this(title, company);
+        this.manager = manager;
     }
 
     public String getTitle() {
@@ -50,5 +63,17 @@ public class Department extends LongIdEntity {
 
     public void setManager(Employee manager) {
         this.manager = manager;
+    }
+
+    public static Department of(String title, Employee manager, Company company) {
+        return new Department(title, manager, company);
+    }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id='" + this.getId() + '\'' +
+                "title='" + title + '\'' +
+                '}';
     }
 }

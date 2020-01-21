@@ -33,6 +33,9 @@ public class CompanyService {
 
     public Company update(Company company) {
         logger.debug("request to update company : {}", company);
+        if (company.getId() == null) {
+            throw new IllegalArgumentException("invalid company parameter");
+        }
         return companyRepository.save(company);
     }
 

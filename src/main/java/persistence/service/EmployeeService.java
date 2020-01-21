@@ -34,12 +34,15 @@ public class EmployeeService {
 
     public Employee update(Employee employee) {
         logger.debug("request to update employee : {}", employee);
+        if (employee.getId() == null) {
+            throw new IllegalArgumentException("invalid employee parameter");
+        }
         return employeeRepository.save(employee);
     }
 
     @Transactional(readOnly = true)
     public Page<Employee> findAll(Pageable pageable) {
-        logger.debug("request to all employees");
+        logger.debug("request to get all employees with paging : {}", pageable);
         return employeeRepository.findAll(pageable);
     }
 

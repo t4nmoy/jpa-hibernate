@@ -32,6 +32,7 @@ public class CompanyServiceTests {
 
     @BeforeEach
     public void setup() {
+        testData.createEmployees();
     }
 
     @Test
