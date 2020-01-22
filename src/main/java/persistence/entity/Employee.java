@@ -40,7 +40,7 @@ public class Employee extends LongIdEntity {
 
     private LocalDateTime modifiedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id")
     private Company company;
 
@@ -65,15 +65,15 @@ public class Employee extends LongIdEntity {
 
     }
 
-    private Employee(String email, String name, Designation designation, EmployeeType employeeType){
-        this.email = email;
-        this.name = name;
-        this.designation = designation;
-        this.employeeType = employeeType;
-    }
-
-    public static Employee of(String email, String name, Designation designation, EmployeeType employeeType) {
-        return new Employee(email, name, designation, employeeType);
+    private Employee(Builder builder) {
+        this.company = builder.company;
+        this.department = builder.department;
+        this.email = builder.email;
+        this.name = builder.name;
+        this.status = builder.status;
+        this.designation = builder.designation;
+        this.employeeType = builder.employeeType;
+        this.profile = builder.profile;
     }
 
     public String getEmail() {
@@ -100,5 +100,55 @@ public class Employee extends LongIdEntity {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    public static class Builder {
+        private final Company company;
+        private final Department department;
+        private final String email;
+
+        private String name;
+        private EmployeeStatus status;
+        private Designation designation;
+        private EmployeeType employeeType;
+
+        private Profile profile;
+
+        public Builder(Company company, Department department, String email) {
+            this.company = company;
+            this.department = department;
+            this.email = email;
+        }
+
+        public Builder withStatus(EmployeeStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder withDesignation(Designation designation) {
+            this.designation = designation;
+            return this;
+        }
+
+        public Builder withEmployeeType(EmployeeType employeeType) {
+            this.employeeType = employeeType;
+            return this;
+        }
+
+        public Builder withProfile(Profile profile) {
+            this.profile = profile;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Employee build() {
+            return new Employee(this);
+        }
+
+
     }
 }

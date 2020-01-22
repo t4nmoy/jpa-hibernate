@@ -24,7 +24,7 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    public Company save(String code, String name, CompanyType companyType) {
+    public Company create(String code, String name, CompanyType companyType) {
         Company company = Company.of(code, name, companyType);
         company = companyRepository.save(company);
         logger.debug("new company saved : {}", company);

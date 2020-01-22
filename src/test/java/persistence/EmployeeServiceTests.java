@@ -41,7 +41,7 @@ class EmployeeServiceTests {
 	@Test
 	@Transactional
 	void curdEmployeeTest() {
-		Employee employee = employeeService.save("john@wonderland.org", "john", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
+		Employee employee = employeeService.create("john@wonderland.org", "john", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
 
 		assertNotNull(employee);
 		assertNotNull(employee.getId());

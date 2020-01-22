@@ -13,6 +13,8 @@ public class Department extends LongIdEntity {
 
     private String title;
 
+    private String code;
+
     @OneToOne
     private Employee manager;
 
@@ -31,13 +33,14 @@ public class Department extends LongIdEntity {
 
     }
 
-    private Department(String title, Company company) {
+    private Department(String code, String title, Company company) {
+        this.code = code;
         this.title = title;
         this.company = company;
     }
 
-    private Department(String title, Employee manager, Company company) {
-        this(title, company);
+    private Department(String code, String title, Employee manager, Company company) {
+        this(code, title, company);
         this.manager = manager;
     }
 
@@ -65,8 +68,8 @@ public class Department extends LongIdEntity {
         this.manager = manager;
     }
 
-    public static Department of(String title, Employee manager, Company company) {
-        return new Department(title, manager, company);
+    public static Department of(String code, String title, Employee manager, Company company) {
+        return new Department(code, title, manager, company);
     }
 
     @Override

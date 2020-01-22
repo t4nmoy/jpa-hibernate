@@ -8,9 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
-import persistence.entity.Company;
-import persistence.entity.CompanyType;
+import persistence.entity.*;
 import persistence.service.CompanyService;
+import persistence.service.DepartmentService;
+import persistence.service.EmployeeService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +28,12 @@ public class CompanyServiceTests {
     @Autowired
     private TestData testData;
 
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -38,11 +45,14 @@ public class CompanyServiceTests {
     @Test
     @Transactional
     public void testCurdCompanies() {
-        Company demo1 = companyService.save("DEMO1", "demo company 1", CompanyType.PROVIDER);
-        Company demo2 = companyService.save("DEMO2", "demo company 2", CompanyType.PROVIDER);
-        Company demo3 = companyService.save("DEMO3", "demo company 3", CompanyType.PROVIDER);
-        companyService.save("DEMO4", "demo company 4", CompanyType.PROVIDER);
-        companyService.save("DEMO5", "demo company 5", CompanyType.PROVIDER);
+        Company demo1 = companyService.create("DEMO1", "demo company 1", CompanyType.PROVIDER);
+        Company demo2 = companyService.create("DEMO2", "demo company 2", CompanyType.PROVIDER);
+        Company demo3 = companyService.create("DEMO3", "demo company 3", CompanyType.PROVIDER);
+        companyService.create("DEMO4", "demo company 4", CompanyType.PROVIDER);
+        companyService.create("DEMO5", "demo company 5", CompanyType.PROVIDER);
+
+
+
 
         demo1.addEmployee(testData.getAlice());
         demo1.addEmployee(testData.getBob());

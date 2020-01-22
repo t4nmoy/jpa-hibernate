@@ -8,7 +8,9 @@ public enum Designation {
 
     BASIC_EMPLOYEE("Basic Employee"),
 
-    PROJECT_MANAGER("Project Manager");
+    PROJECT_MANAGER("Project Manager"),
+
+    MARKETING_MANAGER("Marketing Manager");
 
     private String title;
 

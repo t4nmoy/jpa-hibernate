@@ -7,6 +7,7 @@ import java.util.List;
 @Entity
 public class Profile extends LongIdEntity {
 
+    @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
     private String notes;

@@ -3,10 +3,7 @@ package persistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import persistence.entity.CompanyType;
-import persistence.entity.Designation;
-import persistence.entity.Employee;
-import persistence.entity.EmployeeType;
+import persistence.entity.*;
 import persistence.service.CompanyService;
 import persistence.service.EmployeeService;
 
@@ -36,30 +33,35 @@ public class TestData {
     }
 
     public void createCompanies() {
-        companyService.save("root", "root company", CompanyType.PROVIDER);
+        companyService.create("root", "root company", CompanyType.PROVIDER);
         IntStream.range(0, 5)
                 .forEach(value -> {
                     String code = String.valueOf(value);
                     String name = String.format("name-%s", value);
                     CompanyType companyType = CompanyType.values()[value % 3];
-                    companyService.save(code, name, companyType);
+                    companyService.create(code, name, companyType);
                 });
     }
 
     public void createEmployees() {
-        this.bob = employeeService.save("bob@wonderland.org", "bob", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
-        this.alice = employeeService.save("alice@wonderland.org", "alice", Designation.HR_MANAGER, EmployeeType.PERMANENT);
-        this.mark = employeeService.save("mark@wonderland.com", "mark", Designation.TEAM_LEAD, EmployeeType.PERMANENT);
-        this.tom = employeeService.save("tom@gmail.org", "tom", Designation.PROJECT_MANAGER, EmployeeType.ON_PROBATION);
 
-        IntStream.range(0, 5)
-                .forEach(value -> {
-                    String email = String.format("%s@gmail.org", value);
-                    String name = String.valueOf(value);
-                    Designation designation = Designation.values()[value % 4];
-                    EmployeeType employeeType = EmployeeType.values()[value % 4];
-                    employeeService.save(email, name, designation, employeeType);
-                });
+//        Employee marketingManager = employeeService.create("violet@wonderland.com", "violet",
+//                Designation.MARKETING_MANAGER, EmployeeType.PERMANENT);
+     //   Department marketingDept = departmentService.create("MKT", "marketing dept", marketingManager, demo1);
+
+//        this.bob = employeeService.create("bob@wonderland.org", "bob", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
+//        this.alice = employeeService.create("alice@wonderland.org", "alice", Designation.HR_MANAGER, EmployeeType.PERMANENT);
+//        this.mark = employeeService.create("mark@wonderland.com", "mark", Designation.TEAM_LEAD, EmployeeType.PERMANENT);
+//        this.tom = employeeService.create("tom@gmail.org", "tom", Designation.PROJECT_MANAGER, EmployeeType.ON_PROBATION);
+//
+//        IntStream.range(0, 5)
+//                .forEach(value -> {
+//                    String email = String.format("%s@gmail.org", value);
+//                    String name = String.valueOf(value);
+//                    Designation designation = Designation.values()[value % 4];
+//                    EmployeeType employeeType = EmployeeType.values()[value % 4];
+//                    employeeService.create(email, name, designation, employeeType);
+//                });
     }
 
     public Employee getBob() {

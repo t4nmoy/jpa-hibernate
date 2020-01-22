@@ -6,9 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import persistence.entity.Company;
 import persistence.entity.Designation;
 import persistence.entity.Employee;
 import persistence.entity.EmployeeType;
+import persistence.exception.NoSuchEntityException;
 import persistence.repository.EmployeeRepository;
 
 import java.util.Optional;
@@ -21,12 +24,24 @@ public class EmployeeService {
 
     private EmployeeRepository employeeRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    private CompanyService companyService;
+
+    public EmployeeService(EmployeeRepository employeeRepository, CompanyService companyService) {
         this.employeeRepository = employeeRepository;
+        this.companyService = companyService;
     }
 
-    public Employee save(String email, String name, Designation designation, EmployeeType employeeType) {
-        Employee employee = Employee.of(email, name, designation, employeeType);
+    public Employee create(Employee employee) {
+
+        Assert.isNull(employee.getId(), "");
+
+        Assert.notNull(company.getId(), String.format("invalid company id : %s", company.getId()));
+
+        if (!companyService.findOne(company.getId()).isPresent()) {
+            throw new NoSuchEntityException(String.format("company with id %s not found", company.getId()));
+        }
+
+        Employee employee = Employee.of(company, email, name, designation, employeeType);
         employee =  employeeRepository.save(employee);
         logger.debug("new employee saved : {}", employee);
         return employee;
