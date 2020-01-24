@@ -63,7 +63,7 @@ public class CompanyService {
 
     @Transactional(readOnly = true)
     public Company findMust(Long id) {
-        logger.info("request to must get company with id : {}", id);
+        logger.debug("request to must get company with id : {}", id);
         return companyRepository.findMust(id);
     }
 }
