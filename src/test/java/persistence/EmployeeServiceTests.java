@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import persistence.entity.Company;
-import persistence.entity.Designation;
-import persistence.entity.Employee;
-import persistence.entity.EmployeeType;
+import persistence.entity.*;
 import persistence.service.CompanyService;
+import persistence.service.DepartmentService;
 import persistence.service.EmployeeService;
 
 import javax.persistence.EntityManager;
@@ -28,6 +26,9 @@ class EmployeeServiceTests {
 	private CompanyService companyService;
 
 	@Autowired
+	private DepartmentService departmentService;
+
+	@Autowired
 	private TestData testData;
 
 	@PersistenceContext
@@ -41,9 +42,23 @@ class EmployeeServiceTests {
 	@Test
 	@Transactional
 	void curdEmployeeTest() {
-		Employee employee = employeeService.create("john@wonderland.org", "john", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
 
-		assertNotNull(employee);
+		Company rootCompany = companyService.findByCode(Company.ROOT_COMPANY).get();
+
+		Department department = departmentService.findByCode("MKT").get();
+
+		Employee employee = Employee.builder()
+				.email("john@wonderland.org")
+				.name("john")
+				.designation(Designation.BASIC_EMPLOYEE)
+				.employeeType(EmployeeType.PERMANENT)
+				.company(rootCompany)
+				.department(department)
+				.build();
+
+
+		employee = employeeService.create(employee);
+
 		assertNotNull(employee.getId());
 		assertEquals("john@wonderland.org", employee.getEmail());
 
@@ -51,6 +66,9 @@ class EmployeeServiceTests {
 		EmployeeType newType = EmployeeType.anyWithout(oldType);
 		employee.setEmployeeType(newType);
 		employeeService.update(employee);
+
+		entityManager.flush();
+		entityManager.clear();
 
 		Optional<Employee> emp = employeeService.findOne(employee.getId());
 		assertTrue(emp.isPresent());
@@ -61,26 +79,58 @@ class EmployeeServiceTests {
 	@Test
 	@Transactional
 	public void testEmployeeCompanyRelationship() {
-		Optional<Company> company = companyService.findByCode(Company.ROOT_COMPANY);
-		assertTrue(company.isPresent());
 
-		company.map(rootCompany -> {
-			Employee alice = employeeService.findMust(testData.getAlice().getId());
-			Employee bob = employeeService.findMust(testData.getBob().getId());
+		String demoCompanyCode = "DEMO12";
 
-			alice.setCompany(rootCompany);
-			employeeService.update(alice);
+		companyService.create(demoCompanyCode, "a new demo company", CompanyType.ENGINEERING);
+		entityManager.flush();
+		entityManager.clear();
 
-			bob.setCompany(rootCompany);
-			employeeService.update(bob);
+		Optional<Company> demoCompany = companyService.findByCode(demoCompanyCode);
+		assertTrue(demoCompany.isPresent());
 
-			return rootCompany;
+		demoCompany.map(company -> {
+			Department demoDept1 = Department.builder()
+					.code("DEPT1")
+					.title("demo department 1")
+					.company(company)
+					.build();
+			demoDept1 = departmentService.create(demoDept1);
+
+			Department demoDept2 = Department.builder()
+					.code("DEPT2")
+					.title("demo dept 2")
+					.company(company)
+					.build();
+			departmentService.create(demoDept2);
+
+			Employee demoEmployee1 = Employee.builder()
+					.email("demoEmp1@wonderland.com")
+					.name("demo emp 1")
+					.designation(Designation.BASIC_EMPLOYEE)
+					.employeeType(EmployeeType.INTERN)
+					.department(demoDept1)
+					.company(company)
+					.build();
+			employeeService.create(demoEmployee1);
+
+			Employee demoEmployee2 = Employee.builder()
+					.email("demoEmp2@wonderland.com")
+					.name("demo emp 2")
+					.designation(Designation.BASIC_EMPLOYEE)
+					.employeeType(EmployeeType.PERMANENT)
+					.department(demoDept1)
+					.company(company)
+					.build();
+			employeeService.create(demoEmployee2);
+
+			return company;
 		});
 
 		entityManager.flush();
 		entityManager.clear();
 
-		Company rootCompany = companyService.findMust(company.get().getId());
+		Company rootCompany = companyService.findMust(demoCompany.get().getId());
 		assertNotNull(rootCompany);
 		assertEquals(2, rootCompany.getEmployees().size());
 	}

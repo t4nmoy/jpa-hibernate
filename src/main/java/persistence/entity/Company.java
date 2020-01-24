@@ -1,6 +1,7 @@
 package persistence.entity;
 
 import org.hibernate.annotations.BatchSize;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class Company extends LongIdEntity {
     @BatchSize(size = 10)
     private List<Employee> employees = new ArrayList<>();
 
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private List<Department> departments = new ArrayList<>();
+
     public Company() {
 
     }
@@ -53,9 +57,17 @@ public class Company extends LongIdEntity {
     }
 
     public void addEmployee(Employee employee) {
+
+        Assert.isTrue(employee.getCompany() == null || this.equals(employee.getCompany()),
+                String.format("employee's company must be null or should be %s", this));
+
         if (!employees.contains(employee)) {
             employees.add(employee);
         }
+    }
+
+    public List<Department> getDepartments() {
+        return departments;
     }
 
     @Override

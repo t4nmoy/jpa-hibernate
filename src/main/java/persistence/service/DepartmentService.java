@@ -2,13 +2,14 @@ package persistence.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import persistence.entity.Company;
 import persistence.entity.Department;
-import persistence.entity.Employee;
-import persistence.exception.NoSuchEntityException;
 import persistence.repository.DepartmentRepository;
+
+import javax.validation.Valid;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
@@ -17,6 +18,7 @@ public class DepartmentService {
 
     private DepartmentRepository departmentRepository;
 
+    @Lazy
     private EmployeeService employeeService;
 
     private CompanyService companyService;
@@ -27,22 +29,19 @@ public class DepartmentService {
         this.companyService = companyService;
     }
 
-    public Department create(String code, String title, Employee manager, Company company) {
+    public Department create(@Valid Department department) {
 
-        Assert.notNull(manager.getId(), String.format("invalid manager id : %s", manager.getId()));
-        Assert.notNull(company.getId(), String.format("invalid company id : %s", company.getId()));
+        Assert.isNull(department.getId(), "employee id must be null");
+        Assert.notNull(department.getCompany().getId(), String.format("provided company id can't be null"));
 
-        if (!employeeService.findOne(manager.getId()).isPresent()) {
-            throw new NoSuchEntityException(String.format("manager with id %s not found", manager.getId()));
+        companyService.findMust(department.getCompany().getId());
+        if (department.getManager() != null) {
+            Assert.notNull(department.getManager().getId(), String.format("provided manager id can't be null"));
+            employeeService.findMust(department.getManager().getId());
         }
 
-        if (!companyService.findOne(company.getId()).isPresent()) {
-            throw new NoSuchEntityException(String.format("company with id %s not found", company.getId()));
-        }
-
-        Department department = Department.of(code, title, manager, company);
         department = departmentRepository.save(department);
-        logger.debug("new department saved: {}", department);
+        logger.debug("new department created: {}", department);
         return department;
     }
 
@@ -52,6 +51,14 @@ public class DepartmentService {
             throw new IllegalArgumentException("invalid department parameter");
         }
         return departmentRepository.save(department);
+    }
+
+    public Department findMust(Long id) {
+        return departmentRepository.findMust(id);
+    }
+
+    public Optional<Department> findByCode(String code){
+        return departmentRepository.findByCode(code);
     }
 
 }

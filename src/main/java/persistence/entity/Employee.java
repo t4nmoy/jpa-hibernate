@@ -1,12 +1,22 @@
 package persistence.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "email" }))
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Employee extends LongIdEntity {
 
+    @NonNull
+    @NotEmpty(message = "email is required")
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
     private String name;
@@ -40,11 +50,14 @@ public class Employee extends LongIdEntity {
 
     private LocalDateTime modifiedAt;
 
+    @NonNull
+    @NotNull(message = "company must not be null")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "company_id")
-    private Company company;
+    public Company company;
 
-    @ManyToOne
+    @NonNull
+    @NotNull(message = "department is required")
+    @ManyToOne(optional = false)
     private Department department;
 
     @OneToOne
@@ -56,40 +69,17 @@ public class Employee extends LongIdEntity {
         this.modifiedAt = LocalDateTime.now();
     }
 
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     @PreUpdate
     public void onPreUpdate() {
         this.modifiedAt = LocalDateTime.now();
     }
 
-    public Employee() {
-
-    }
-
-    private Employee(Builder builder) {
-        this.company = builder.company;
-        this.department = builder.department;
-        this.email = builder.email;
-        this.name = builder.name;
-        this.status = builder.status;
-        this.designation = builder.designation;
-        this.employeeType = builder.employeeType;
-        this.profile = builder.profile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public EmployeeType getEmployeeType() {
-        return employeeType;
-    }
-
     public void setEmployeeType(EmployeeType employeeType) {
         this.employeeType = employeeType;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 
     @Override
@@ -100,55 +90,5 @@ public class Employee extends LongIdEntity {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 '}';
-    }
-
-    public static class Builder {
-        private final Company company;
-        private final Department department;
-        private final String email;
-
-        private String name;
-        private EmployeeStatus status;
-        private Designation designation;
-        private EmployeeType employeeType;
-
-        private Profile profile;
-
-        public Builder(Company company, Department department, String email) {
-            this.company = company;
-            this.department = department;
-            this.email = email;
-        }
-
-        public Builder withStatus(EmployeeStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder withDesignation(Designation designation) {
-            this.designation = designation;
-            return this;
-        }
-
-        public Builder withEmployeeType(EmployeeType employeeType) {
-            this.employeeType = employeeType;
-            return this;
-        }
-
-        public Builder withProfile(Profile profile) {
-            this.profile = profile;
-            return this;
-        }
-
-        public Builder withName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Employee build() {
-            return new Employee(this);
-        }
-
-
     }
 }

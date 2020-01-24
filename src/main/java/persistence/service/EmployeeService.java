@@ -2,21 +2,21 @@ package persistence.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import persistence.entity.Company;
-import persistence.entity.Designation;
+import org.springframework.validation.annotation.Validated;
 import persistence.entity.Employee;
-import persistence.entity.EmployeeType;
-import persistence.exception.NoSuchEntityException;
 import persistence.repository.EmployeeRepository;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Service
+@Validated
 @Transactional
 public class EmployeeService {
 
@@ -26,33 +26,44 @@ public class EmployeeService {
 
     private CompanyService companyService;
 
-    public EmployeeService(EmployeeRepository employeeRepository, CompanyService companyService) {
+    private DepartmentService departmentService;
+
+    public EmployeeService(EmployeeRepository employeeRepository, CompanyService companyService, @Lazy DepartmentService departmentService) {
         this.employeeRepository = employeeRepository;
         this.companyService = companyService;
+        this.departmentService = departmentService;
     }
 
-    public Employee create(Employee employee) {
+    public Employee create(@Valid Employee employee) {
+        Assert.isNull(employee.getId(), "employee id must be null");
+        validateEmployee(employee);
 
-        Assert.isNull(employee.getId(), "");
-
-        Assert.notNull(company.getId(), String.format("invalid company id : %s", company.getId()));
-
-        if (!companyService.findOne(company.getId()).isPresent()) {
-            throw new NoSuchEntityException(String.format("company with id %s not found", company.getId()));
-        }
-
-        Employee employee = Employee.of(company, email, name, designation, employeeType);
-        employee =  employeeRepository.save(employee);
-        logger.debug("new employee saved : {}", employee);
+        employee = employeeRepository.save(employee);
+        logger.debug("new employee created : {}", employee);
         return employee;
     }
 
     public Employee update(Employee employee) {
         logger.debug("request to update employee : {}", employee);
+
+        Assert.isTrue(employee.getId() != null, "employee id must not be null");
+        validateEmployee(employee);
+
         if (employee.getId() == null) {
             throw new IllegalArgumentException("invalid employee parameter");
         }
         return employeeRepository.save(employee);
+    }
+
+    private void validateEmployee(Employee employee) {
+        Assert.notNull(employee.getCompany().getId(), "company id is required");
+        Assert.notNull(employee.getDepartment().getId(), "department id is required");
+
+        companyService.findMust(employee.getCompany().getId());
+        departmentService.findMust(employee.getDepartment().getId());
+
+        Assert.isTrue(employee.getCompany().equals(employee.getDepartment().getCompany()),
+                "department's company is different than employee's company");
     }
 
     @Transactional(readOnly = true)

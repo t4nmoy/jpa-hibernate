@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import persistence.entity.*;
 import persistence.service.CompanyService;
+import persistence.service.DepartmentService;
 import persistence.service.EmployeeService;
 
 import java.util.stream.IntStream;
@@ -19,6 +20,9 @@ public class TestData {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     private Employee bob;
 
     private Employee alice;
@@ -32,36 +36,99 @@ public class TestData {
         createEmployees();
     }
 
-    public void createCompanies() {
-        companyService.create("root", "root company", CompanyType.PROVIDER);
-        IntStream.range(0, 5)
-                .forEach(value -> {
-                    String code = String.valueOf(value);
-                    String name = String.format("name-%s", value);
-                    CompanyType companyType = CompanyType.values()[value % 3];
-                    companyService.create(code, name, companyType);
-                });
+    private void createCompanies() {
+        companyService.create(Company.ROOT_COMPANY, "root company", CompanyType.MARKETING);
     }
 
-    public void createEmployees() {
+    private void createEmployees() {
+        Company rootCompany = companyService.findByCode(Company.ROOT_COMPANY).get();
 
-//        Employee marketingManager = employeeService.create("violet@wonderland.com", "violet",
-//                Designation.MARKETING_MANAGER, EmployeeType.PERMANENT);
-     //   Department marketingDept = departmentService.create("MKT", "marketing dept", marketingManager, demo1);
+        Department rootMarketingDept = Department.builder()
+                .code("MKT")
+                .title("marketing dept")
+                .company(rootCompany)
+                .build();
+        rootMarketingDept = departmentService.create(rootMarketingDept);
 
-//        this.bob = employeeService.create("bob@wonderland.org", "bob", Designation.BASIC_EMPLOYEE, EmployeeType.PERMANENT);
-//        this.alice = employeeService.create("alice@wonderland.org", "alice", Designation.HR_MANAGER, EmployeeType.PERMANENT);
-//        this.mark = employeeService.create("mark@wonderland.com", "mark", Designation.TEAM_LEAD, EmployeeType.PERMANENT);
-//        this.tom = employeeService.create("tom@gmail.org", "tom", Designation.PROJECT_MANAGER, EmployeeType.ON_PROBATION);
-//
-//        IntStream.range(0, 5)
-//                .forEach(value -> {
-//                    String email = String.format("%s@gmail.org", value);
-//                    String name = String.valueOf(value);
-//                    Designation designation = Designation.values()[value % 4];
-//                    EmployeeType employeeType = EmployeeType.values()[value % 4];
-//                    employeeService.create(email, name, designation, employeeType);
-//                });
+        Department rootSalesDept = Department.builder()
+                .code("SALES")
+                .title("sales dept")
+                .company(rootCompany)
+                .build();
+        departmentService.create(rootSalesDept);
+
+        Employee violet = Employee.builder()
+                .email("violet@wonderland.com")
+                .name("violet")
+                .designation(Designation.MANAGER)
+                .employeeType(EmployeeType.PERMANENT)
+                .department(rootMarketingDept)
+                .company(rootCompany)
+                .build();
+        employeeService.create(violet);
+
+        Employee bob = Employee.builder()
+                .email("bob@wonderland.org")
+                .name("bob")
+                .designation(Designation.BASIC_EMPLOYEE)
+                .employeeType(EmployeeType.PERMANENT)
+                .department(rootMarketingDept)
+                .company(rootCompany)
+                .build();
+        this.bob = employeeService.create(bob);
+
+
+        Employee alice = Employee.builder()
+                .email("alice@wonderland.org")
+                .name("alice")
+                .designation(Designation.BASIC_EMPLOYEE)
+                .employeeType(EmployeeType.INTERN)
+                .company(rootCompany)
+                .department(rootSalesDept)
+                .build();
+        this.alice = employeeService.create(alice);
+
+
+
+        Company tesla = companyService.create("TESLA", "tesla inc", CompanyType.ENGINEERING);
+
+        Department teslaEngineeringDept = Department.builder()
+                .code("TESLA_ENG")
+                .title("tesla engineering dept")
+                .company(tesla)
+                .build();
+        teslaEngineeringDept = departmentService.create(teslaEngineeringDept);
+
+
+        Employee mark = Employee.builder()
+                .email("mark@wonderland.com")
+                .name("mark")
+                .company(tesla)
+                .department(teslaEngineeringDept)
+                .designation(Designation.TEAM_LEAD)
+                .employeeType(EmployeeType.PERMANENT)
+                .build();
+        this.mark = employeeService.create(mark);
+
+
+        Department teslaQaDept = Department.builder()
+                .code("TESLA_QA")
+                .title("tesla QA dept")
+                .company(tesla)
+                .build();
+        teslaQaDept = departmentService.create(teslaQaDept);
+
+        Employee tom = Employee.builder()
+                .email("tom@gmail.org")
+                .name("tom")
+                .designation(Designation.MANAGER)
+                .employeeType(EmployeeType.ON_PROBATION)
+                .department(teslaQaDept)
+                .company(tesla)
+                .build();
+        this.tom = employeeService.create(tom);
+
+
     }
 
     public Employee getBob() {

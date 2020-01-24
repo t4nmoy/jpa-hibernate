@@ -2,7 +2,7 @@ package persistence.entity;
 
 public enum CompanyType {
 
-    CUSTOMER("Customer"), PROVIDER("Provider"), RESELLER("Reseller");
+    CUSTOMER("Customer"), MARKETING("Marketing"), ENGINEERING("Engineering");
 
     private String code;
 
