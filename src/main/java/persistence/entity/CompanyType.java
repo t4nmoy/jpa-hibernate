@@ -4,7 +4,7 @@ public enum CompanyType {
 
     CUSTOMER("Customer"), MARKETING("Marketing"), ENGINEERING("Engineering");
 
-    private String code;
+    private final String code;
 
     CompanyType(String code) {
         this.code = code;

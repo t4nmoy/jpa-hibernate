@@ -8,8 +8,6 @@ import persistence.service.CompanyService;
 import persistence.service.DepartmentService;
 import persistence.service.EmployeeService;
 
-import java.util.stream.IntStream;
-
 @Service
 @Transactional
 public class TestData {

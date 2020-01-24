@@ -22,11 +22,11 @@ public class EmployeeService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
 
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
-    private CompanyService companyService;
+    private final CompanyService companyService;
 
-    private DepartmentService departmentService;
+    private final DepartmentService departmentService;
 
     public EmployeeService(EmployeeRepository employeeRepository, CompanyService companyService, @Lazy DepartmentService departmentService) {
         this.employeeRepository = employeeRepository;

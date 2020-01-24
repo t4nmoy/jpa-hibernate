@@ -16,12 +16,12 @@ public class DepartmentService {
 
     private static final Logger logger = LoggerFactory.getLogger(DepartmentService.class);
 
-    private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Lazy
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
-    private CompanyService companyService;
+    private final CompanyService companyService;
 
     public DepartmentService(DepartmentRepository departmentRepository, EmployeeService employeeService, CompanyService companyService) {
         this.departmentRepository = departmentRepository;
@@ -32,11 +32,11 @@ public class DepartmentService {
     public Department create(@Valid Department department) {
 
         Assert.isNull(department.getId(), "employee id must be null");
-        Assert.notNull(department.getCompany().getId(), String.format("provided company id can't be null"));
+        Assert.notNull(department.getCompany().getId(), "provided company id can't be null");
 
         companyService.findMust(department.getCompany().getId());
         if (department.getManager() != null) {
-            Assert.notNull(department.getManager().getId(), String.format("provided manager id can't be null"));
+            Assert.notNull(department.getManager().getId(), "provided manager id can't be null");
             employeeService.findMust(department.getManager().getId());
         }
 

@@ -13,7 +13,7 @@ public enum EmployeeType {
 
     ON_PROBATION(Short.valueOf("103"));
 
-    private Short type;
+    private final Short type;
 
     EmployeeType(Short type) {
         this.type = type;

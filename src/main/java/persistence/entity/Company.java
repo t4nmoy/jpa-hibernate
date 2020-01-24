@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "code" })})
 public class Company extends LongIdEntity {
 
     public static final String ROOT_COMPANY = "root";
 
     private String name;
 
+    @Column(unique = true, nullable = false)
     private String code;
 
     /**
@@ -29,10 +29,10 @@ public class Company extends LongIdEntity {
             orphanRemoval = true
     )
     @BatchSize(size = 10)
-    private List<Employee> employees = new ArrayList<>();
+    private final List<Employee> employees = new ArrayList<>();
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
-    private List<Department> departments = new ArrayList<>();
+    private final List<Department> departments = new ArrayList<>();
 
     public Company() {
 

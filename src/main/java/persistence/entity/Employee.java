@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee extends LongIdEntity {
+public class Employee extends AuditableEntity {
 
     @NonNull
     @NotEmpty(message = "email is required")
