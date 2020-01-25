@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import persistence.entity.*;
+import persistence.query.CustomCriteria;
+import persistence.query.QueryOperation;
 import persistence.service.CompanyService;
 import persistence.service.DepartmentService;
 import persistence.service.EmployeeService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -133,6 +137,14 @@ class EmployeeServiceTests {
 		Company rootCompany = companyService.findMust(demoCompany.get().getId());
 		assertNotNull(rootCompany);
 		assertEquals(2, rootCompany.getEmployees().size());
+
+
+		List<CustomCriteria> criteriaList = Arrays.asList(
+				new CustomCriteria("name", "demo emp 1", QueryOperation.EQUAL)
+		);
+		List<Employee> employees = employeeService.findAll(criteriaList);
+		assertEquals(1, employees.size());
+
 	}
 
 }

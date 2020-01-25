@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import persistence.entity.Employee;
+import persistence.query.CustomCriteria;
 import persistence.repository.EmployeeRepository;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,7 +45,7 @@ public class EmployeeService {
         return employee;
     }
 
-    public Employee update(Employee employee) {
+    public Employee update(@Valid Employee employee) {
         logger.debug("request to update employee : {}", employee);
 
         Assert.isTrue(employee.getId() != null, "employee id must not be null");
@@ -70,6 +72,12 @@ public class EmployeeService {
     public Page<Employee> findAll(Pageable pageable) {
         logger.debug("request to get all employees with paging : {}", pageable);
         return employeeRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Employee> findAll(List<CustomCriteria> filters) {
+        logger.debug("request to get all employees with custom criteria");
+        return employeeRepository.findAll(filters);
     }
 
     @Transactional(readOnly = true)
