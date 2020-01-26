@@ -1,8 +1,11 @@
 package persistence.query;
 
 public class CustomCriteria {
+
     private String key;
+
     private Object value;
+
     private QueryOperation operation;
 
     public CustomCriteria(String key, Object value, QueryOperation operation) {

@@ -21,6 +21,8 @@ public class Employee extends AuditableEntity {
 
     private String name;
 
+    private Short age;
+
     /**
      * column will be of type {@link Integer}
      *
@@ -46,10 +48,6 @@ public class Employee extends AuditableEntity {
      */
     private EmployeeType employeeType;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime modifiedAt;
-
     @NonNull
     @NotNull(message = "company must not be null")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -63,19 +61,8 @@ public class Employee extends AuditableEntity {
     @OneToOne
     private Profile profile;
 
-    @PrePersist
-    public void onPrePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.modifiedAt = LocalDateTime.now();
-    }
-
     public void setCompany(Company company) {
         this.company = company;
-    }
-
-    @PreUpdate
-    public void onPreUpdate() {
-        this.modifiedAt = LocalDateTime.now();
     }
 
     public void setEmployeeType(EmployeeType employeeType) {

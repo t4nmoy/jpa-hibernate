@@ -1,6 +1,7 @@
 package persistence.entity;
 
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -13,8 +14,8 @@ import java.time.Instant;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Data
-public abstract class AuditableEntity extends LongIdEntity {
+@Getter
+abstract class AuditableEntity extends LongIdEntity {
 
     @CreatedBy
     @Column(nullable = false, updatable = false)

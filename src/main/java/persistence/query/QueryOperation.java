@@ -10,6 +10,6 @@ public enum QueryOperation {
     MATCH,
     MATCH_START,
     MATCH_END,
-    IN,
-    NOT_IN
+    CONTAINS,
+    NOT_CONTAINS
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import persistence.entity.*;
 import persistence.query.CustomCriteria;
 import persistence.query.QueryOperation;
@@ -14,7 +15,7 @@ import persistence.service.EmployeeService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ class EmployeeServiceTests {
 	private EntityManager entityManager;
 
 	@BeforeEach
-	public void setup() {
+    void setup() {
 		testData.apply();
 	}
 
@@ -47,17 +48,19 @@ class EmployeeServiceTests {
 	@Transactional
 	void curdEmployeeTest() {
 
-		Company rootCompany = companyService.findByCode(Company.ROOT_COMPANY).get();
+		Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+        Assert.isTrue(rootCompany.isPresent(), "company must not be null");
 
-		Department department = departmentService.findByCode("MKT").get();
+		Optional<Department> department = departmentService.findByCode("MKT");
+		Assert.isTrue(department.isPresent(), "department must not be null");
 
 		Employee employee = Employee.builder()
 				.email("john@wonderland.org")
 				.name("john")
 				.designation(Designation.BASIC_EMPLOYEE)
 				.employeeType(EmployeeType.PERMANENT)
-				.company(rootCompany)
-				.department(department)
+				.company(rootCompany.get())
+				.department(department.get())
 				.build();
 
 
@@ -114,6 +117,7 @@ class EmployeeServiceTests {
 					.designation(Designation.BASIC_EMPLOYEE)
 					.employeeType(EmployeeType.INTERN)
 					.department(demoDept1)
+					.age((short)45)
 					.company(company)
 					.build();
 			employeeService.create(demoEmployee1);
@@ -124,6 +128,7 @@ class EmployeeServiceTests {
 					.designation(Designation.BASIC_EMPLOYEE)
 					.employeeType(EmployeeType.PERMANENT)
 					.department(demoDept1)
+					.age((short)32)
 					.company(company)
 					.build();
 			employeeService.create(demoEmployee2);
@@ -139,12 +144,31 @@ class EmployeeServiceTests {
 		assertEquals(2, rootCompany.getEmployees().size());
 
 
-		List<CustomCriteria> criteriaList = Arrays.asList(
+		List<CustomCriteria> criteriaList = Collections.singletonList(
 				new CustomCriteria("name", "demo emp 1", QueryOperation.EQUAL)
 		);
 		List<Employee> employees = employeeService.findAll(criteriaList);
 		assertEquals(1, employees.size());
 
+		criteriaList = Collections.singletonList(
+				new CustomCriteria("age", (short)30, QueryOperation.GREATER_THAN)
+		);
+		employees = employeeService.findAll(criteriaList);
+		assertEquals(2, employees.size());
+
+
+		criteriaList = Collections.singletonList(
+				new CustomCriteria("age", (short)30, QueryOperation.LESS_THAN)
+		);
+		employees = employeeService.findAll(criteriaList);
+		assertEquals(0, employees.size());
+
+
+		criteriaList = Collections.singletonList(
+				new CustomCriteria("name", "demo", QueryOperation.MATCH_END)
+		);
+		employees = employeeService.findAll(criteriaList);
+		assertEquals(2, employees.size());
 	}
 
 }
