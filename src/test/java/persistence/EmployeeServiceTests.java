@@ -85,7 +85,7 @@ class EmployeeServiceTests {
 
 	@Test
 	@Transactional
-	public void testEmployeeCompanyRelationship() {
+	void testEmployeeCompanyRelationship() {
 
 		String demoCompanyCode = "DEMO12";
 

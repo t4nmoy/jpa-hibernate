@@ -8,6 +8,5 @@ import java.util.List;
 
 @NoRepositoryBean
 public interface ExtendedBaseRepository <T, ID extends Serializable> extends ExtendedJpaRepository<T, ID> {
-
     List<T> findAll(List<CustomCriteria> filters);
 }

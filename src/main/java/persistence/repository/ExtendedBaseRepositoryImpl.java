@@ -3,6 +3,7 @@ package persistence.repository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import persistence.exception.OperationNotSupportedException;
 import persistence.query.*;
 
 import javax.persistence.EntityManager;
@@ -41,6 +42,12 @@ public class ExtendedBaseRepositoryImpl<T, ID extends Serializable> extends Simp
         return (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
             for (CustomCriteria criteria : criteriaList) {
+                if (operations.get(criteria.getOperation()) == null) {
+                    throw new OperationNotSupportedException(
+                            String.format("no handler is registered for operation : %s",
+                            criteria.getOperation())
+                    );
+                }
                 predicates.add(operations.get(criteria.getOperation()).toPredicate(root, builder, criteria));
             }
             return builder.and(predicates.toArray(new Predicate[0]));

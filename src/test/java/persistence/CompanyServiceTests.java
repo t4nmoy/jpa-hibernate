@@ -35,7 +35,7 @@ public class CompanyServiceTests {
 
     @Test
     @Transactional
-    public void testCurdCompanies() {
+    void testCurdCompanies() {
         Company demo1 = companyService.create("DEMO1", "demo company 1", CompanyType.MARKETING);
         Company demo2 = companyService.create("DEMO2", "demo company 2", CompanyType.ENGINEERING);
         Company demo3 = companyService.create("DEMO3", "demo company 3", CompanyType.MARKETING);

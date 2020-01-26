@@ -34,6 +34,9 @@ public class Company extends LongIdEntity {
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private final List<Department> departments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "company")
+    private final List<Customer> customers = new ArrayList<>();
+
     public Company() {
 
     }
