@@ -19,11 +19,14 @@ public class CustomerService {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
-    @Autowired
-    private CustomerRepository repository;
+    private final CustomerRepository repository;
 
-    @Autowired
-    private CompanyService companyService;
+    private final CompanyService companyService;
+
+    public CustomerService(CustomerRepository repository, CompanyService companyService) {
+        this.repository = repository;
+        this.companyService = companyService;
+    }
 
     public Customer create(@Valid Customer customer) {
         Assert.isNull(customer.getId(), "customer id must be null");
@@ -47,5 +50,9 @@ public class CustomerService {
 
     public Customer findMust(Long id) {
         return repository.findMust(id);
+    }
+
+    public Customer findByName(String name) {
+        return repository.findByName(name);
     }
 }

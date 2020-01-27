@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import persistence.entity.Company;
+import persistence.entity.CompanyType;
 import persistence.entity.Customer;
 import persistence.entity.PhoneNumber;
 import persistence.service.CompanyService;
 import persistence.service.CustomerService;
+import persistence.utils.TenantContext;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
@@ -69,6 +71,7 @@ class CustomerServiceTest {
         assertNotNull(demo1);
         assertNotNull(demo1.getId());
         assertEquals(2, demo1.getPhones().size());
+        assertNotNull(demo1.getCreatedDate());
 
         PhoneNumber num3 = new PhoneNumber("0000003", PhoneNumber.Type.OFFICE);
         demo1.addPhone(num3);
@@ -107,5 +110,35 @@ class CustomerServiceTest {
         rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
         assertTrue(rootCompany.isPresent());
         assertEquals(rootCompany.get().getCustomers().get(0), demo3);
+    }
+
+
+    @Test
+    @Transactional
+    void testDataFilterWithAop() {
+        Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+        assertTrue(rootCompany.isPresent());
+
+        Customer demoCustomer1 = new Customer("demo", rootCompany.get());
+        demoCustomer1 = customerService.create(demoCustomer1);
+        assertNotNull(demoCustomer1.getId());
+
+        Company demoCompany = companyService.create("demo company", "root company", CompanyType.MARKETING);
+        TenantContext.setTenantId(demoCompany.getId());
+
+        Customer demoCustomer2 = new Customer("demo", demoCompany);
+        demoCustomer2 = customerService.create(demoCustomer2);
+        assertNotNull(demoCustomer2.getId());
+
+        demoCustomer2.setTenantId(demoCompany.getId());
+        customerService.update(demoCustomer2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+
+
+        Customer customer = customerService.findByName("demo");
+        assertEquals(demoCustomer2, customer);
     }
 }

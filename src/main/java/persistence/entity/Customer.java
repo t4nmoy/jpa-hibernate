@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -18,7 +21,9 @@ import java.util.*;
 @Getter
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Customer extends AuditableEntity {
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = "long"))
+@Filter(name = "tenantFilter", condition = "tenant_id =:tenantId")
+public class Customer extends TenantEntityBase {
 
     @NonNull
     @NotBlank(message = "customer name is required")
@@ -46,9 +51,7 @@ public class Customer extends AuditableEntity {
     }
 
     public void removeItemQuantity(String itemName) {
-        if (this.itemQuantityMap.containsKey(itemName)) {
-            this.itemQuantityMap.remove(itemName);
-        }
+        this.itemQuantityMap.remove(itemName);
     }
 
     public Set<PhoneNumber> getPhones() {
@@ -56,8 +59,6 @@ public class Customer extends AuditableEntity {
     }
 
     public void addPhone(PhoneNumber phone) {
-        if (!this.phones.contains(phone)) {
-            this.phones.add(phone);
-        }
+        this.phones.add(phone);
     }
 }
