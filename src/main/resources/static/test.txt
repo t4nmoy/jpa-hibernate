@@ -1,0 +1,80 @@
+select customer0_.id as id1_3_0_, customer0_.version as version2_3_0_, customer0_.created_by as created_3_3_0_, customer0_.created_date as created_4_3_0_,
+customer0_.last_modified_by as last_mod5_3_0_, customer0_.last_modified_date as last_mod6_3_0_, customer0_.company_id as company_8_3_0_, customer0_.name
+as name7_3_0_, company1_.id as id1_1_1_, company1_.version as version2_1_1_, company1_.code as code3_1_1_, company1_.company_type as company_4_1_1_,
+company1_.name as name5_1_1_, employees2_.company_id as company13_8_2_, employees2_.id as id1_8_2_, employees2_.id as id1_8_3_, employees2_.version
+as version2_8_3_, employees2_.created_by as created_3_8_3_, employees2_.created_date as created_4_8_3_, employees2_.last_modified_by as last_mod5_8_3_,
+employees2_.last_modified_date as last_mod6_8_3_, employees2_.age as age7_8_3_, employees2_.company_id as company13_8_3_, employees2_.department_id
+as departm14_8_3_, employees2_.designation as designat8_8_3_, employees2_.email as email9_8_3_, employees2_.employee_type as employe10_8_3_,
+employees2_.name as name11_8_3_, employees2_.profile_id as profile15_8_3_, employees2_.status as status12_8_3_, department3_.id as id1_6_4_,
+department3_.version as version2_6_4_, department3_.code as code3_6_4_, department3_.company_id as company_5_6_4_, department3_.manager_id
+as manager_6_6_4_, department3_.title as title4_6_4_, company4_.id as id1_1_5_, company4_.version as version2_1_5_, company4_.code as code3_1_5_,
+company4_.company_type as company_4_1_5_, company4_.name as name5_1_5_, employee5_.id as id1_8_6_, employee5_.version as version2_8_6_,
+employee5_.created_by as created_3_8_6_, employee5_.created_date as created_4_8_6_, employee5_.last_modified_by as last_mod5_8_6_,
+employee5_.last_modified_date as last_mod6_8_6_, employee5_.age as age7_8_6_, employee5_.company_id as company13_8_6_,
+employee5_.department_id as departm14_8_6_, employee5_.designation as designat8_8_6_, employee5_.email as email9_8_6_,
+employee5_.employee_type as employe10_8_6_, employee5_.name as name11_8_6_, employee5_.profile_id as profile15_8_6_,
+employee5_.status as status12_8_6_, profile6_.id as id1_10_7_, profile6_.version as version2_10_7_, profile6_.employee_id
+as employee5_10_7_, profile6_.gender as gender3_10_7_, profile6_.notes as notes4_10_7_, employee7_.id as id1_8_8_,
+employee7_.version as version2_8_8_, employee7_.created_by as created_3_8_8_, employee7_.created_date as created_4_8_8_,
+employee7_.last_modified_by as last_mod5_8_8_, employee7_.last_modified_date as last_mod6_8_8_, employee7_.age
+as age7_8_8_, employee7_.company_id as company13_8_8_, employee7_.department_id as departm14_8_8_,
+employee7_.designation as designat8_8_8_, employee7_.email as email9_8_8_, employee7_.employee_type
+as employe10_8_8_, employee7_.name as name11_8_8_, employee7_.profile_id as profile15_8_8_, employee7_.status as status12_8_8_,
+itemquanti8_.customer_id as customer1_4_9_, itemquanti8_.item_quantity_map as item_qua2_4_9_, itemquanti8_.item_quantity_map_key
+as item_qua3_9_, phones9_.customer_id as customer1_5_10_, phones9_.number as number2_5_10_, phones9_.type as type3_5_10_
+from customer customer0_ inner join company company1_ on customer0_.company_id=company1_.id left outer join employee employees2_
+on company1_.id=employees2_.company_id left outer join department department3_ on employees2_.department_id=department3_.id
+left outer join company company4_ on department3_.company_id=company4_.id left outer join employee employee5_
+on department3_.manager_id=employee5_.id left outer join profile profile6_ on employee5_.profile_id=profile6_.id
+left outer join employee employee7_ on profile6_.employee_id=employee7_.id left outer join customer_item_quantity_map
+itemquanti8_ on customer0_.id=itemquanti8_.customer_id left outer join customer_phones phones9_
+on customer0_.id=phones9_.customer_id where customer0_.id=?
+
+Hibernate: select employees0_.department_id as departm14_8_0_, employees0_.id as id1_8_0_, employees0_.id as id1_8_1_, employees0_.version
+as version2_8_1_, employees0_.created_by as created_3_8_1_, employees0_.created_date as created_4_8_1_, employees0_.last_modified_by
+as last_mod5_8_1_, employees0_.last_modified_date as last_mod6_8_1_, employees0_.age as age7_8_1_, employees0_.company_id as company13_8_1_,
+employees0_.department_id as departm14_8_1_, employees0_.designation as designat8_8_1_, employees0_.email as email9_8_1_, employees0_.employee_type
+as employe10_8_1_, employees0_.name as name11_8_1_, employees0_.profile_id as profile15_8_1_, employees0_.status as status12_8_1_, profile1_.id
+as id1_10_2_, profile1_.version as version2_10_2_, profile1_.employee_id as employee5_10_2_, profile1_.gender as gender3_10_2_, profile1_.notes
+as notes4_10_2_, employee2_.id as id1_8_3_, employee2_.version as version2_8_3_, employee2_.created_by as created_3_8_3_, employee2_.created_date
+as created_4_8_3_, employee2_.last_modified_by as last_mod5_8_3_, employee2_.last_modified_date as last_mod6_8_3_, employee2_.age
+as age7_8_3_, employee2_.company_id as company13_8_3_, employee2_.department_id as departm14_8_3_, employee2_.designation as designat8_8_3_,
+employee2_.email as email9_8_3_, employee2_.employee_type as employe10_8_3_, employee2_.name as name11_8_3_, employee2_.profile_id as profile15_8_3_,
+employee2_.status as status12_8_3_
+from employee employees0_ left outer join profile profile1_ on employees0_.profile_id=profile1_.id
+left outer join employee employee2_ on profile1_.employee_id=employee2_.id where employees0_.department_id=?
+
+Hibernate: select employees0_.department_id as departm14_8_0_, employees0_.id as id1_8_0_, employees0_.id as id1_8_1_, employees0_.version
+as version2_8_1_, employees0_.created_by as created_3_8_1_, employees0_.created_date as created_4_8_1_, employees0_.last_modified_by
+as last_mod5_8_1_, employees0_.last_modified_date as last_mod6_8_1_, employees0_.age as age7_8_1_, employees0_.company_id as company13_8_1_,
+employees0_.department_id as departm14_8_1_, employees0_.designation as designat8_8_1_, employees0_.email as email9_8_1_, employees0_.employee_type
+as employe10_8_1_, employees0_.name as name11_8_1_, employees0_.profile_id as profile15_8_1_, employees0_.status as status12_8_1_, profile1_.id
+as id1_10_2_, profile1_.version as version2_10_2_, profile1_.employee_id as employee5_10_2_, profile1_.gender as gender3_10_2_, profile1_.notes
+as notes4_10_2_, employee2_.id as id1_8_3_, employee2_.version as version2_8_3_, employee2_.created_by as created_3_8_3_, employee2_.created_date
+as created_4_8_3_, employee2_.last_modified_by as last_mod5_8_3_, employee2_.last_modified_date as last_mod6_8_3_, employee2_.age as age7_8_3_,
+employee2_.company_id as company13_8_3_, employee2_.department_id as departm14_8_3_, employee2_.designation as designat8_8_3_, employee2_.email
+as email9_8_3_, employee2_.employee_type as employe10_8_3_, employee2_.name as name11_8_3_, employee2_.profile_id as profile15_8_3_, employee2_.status
+as status12_8_3_ from employee employees0_ left outer join profile profile1_ on employees0_.profile_id=profile1_.id
+left outer join employee employee2_ on profile1_.employee_id=employee2_.id where employees0_.department_id=?
+
+
+
+Hibernate: select company0_.id as id1_1_, company0_.version as version2_1_, company0_.code as code3_1_, company0_.company_type as company_4_1_,
+company0_.name as name5_1_ from company company0_ where company0_.code=?
+
+Hibernate: select customers0_.company_id as company_8_3_0_, customers0_.id as id1_3_0_, customers0_.id as id1_3_1_, customers0_.version
+as version2_3_1_, customers0_.created_by as created_3_3_1_, customers0_.created_date as created_4_3_1_, customers0_.last_modified_by
+as last_mod5_3_1_, customers0_.last_modified_date as last_mod6_3_1_, customers0_.company_id as company_8_3_1_, customers0_.name
+as name7_3_1_ from customer customers0_ where customers0_.company_id=? order by customers0_.name asc
+
+Hibernate: select phones0_.customer_id as customer1_5_0_, phones0_.number as number2_5_0_, phones0_.type as type3_5_0_
+from customer_phones phones0_ where phones0_.customer_id=?
+
+Hibernate: select itemquanti0_.customer_id as customer1_4_0_, itemquanti0_.item_quantity_map as item_qua2_4_0_,
+itemquanti0_.item_quantity_map_key as item_qua3_0_ from customer_item_quantity_map itemquanti0_ where itemquanti0_.customer_id=?
+
+Hibernate: select phones0_.customer_id as customer1_5_0_, phones0_.number as number2_5_0_, phones0_.type as type3_5_0_
+from customer_phones phones0_ where phones0_.customer_id=?
+
+Hibernate: select itemquanti0_.customer_id as customer1_4_0_, itemquanti0_.item_quantity_map as item_qua2_4_0_,
+itemquanti0_.item_quantity_map_key as item_qua3_0_ from customer_item_quantity_map itemquanti0_ where itemquanti0_.customer_id=?

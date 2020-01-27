@@ -14,11 +14,10 @@ import persistence.service.CustomerService;
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class CustomerServiceTest {
+class CustomerServiceTest {
 
     @Autowired
     private CustomerService customerService;
@@ -33,7 +32,7 @@ public class CustomerServiceTest {
     private EntityManager entityManager;
 
     @BeforeEach
-    public void setup(){
+    void setup(){
         testData.apply();
     }
 
@@ -42,6 +41,9 @@ public class CustomerServiceTest {
     void curdCustomerTest() {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
         assertTrue(rootCompany.isPresent());
+
+        Customer demo3 = new Customer("demo3", rootCompany.get());
+        demo3 = customerService.create(demo3);
 
         Customer demo1 = new Customer("demo1", rootCompany.get());
         demo1 = customerService.create(demo1);
@@ -66,7 +68,7 @@ public class CustomerServiceTest {
         demo1 = customerService.findMust(demo1.getId());
         assertNotNull(demo1);
         assertNotNull(demo1.getId());
-        assertTrue(demo1.getPhones().size() == 2);
+        assertEquals(2, demo1.getPhones().size());
 
         PhoneNumber num3 = new PhoneNumber("0000003", PhoneNumber.Type.OFFICE);
         demo1.addPhone(num3);
@@ -77,27 +79,33 @@ public class CustomerServiceTest {
         entityManager.flush();
         entityManager.clear();
 
-        assertTrue(demo1.getPhones().size() == 3);
+        assertEquals(3, demo1.getPhones().size());
 
 
-        demo2.addItemQuantity("item1", Integer.valueOf(11));
-        demo2.addItemQuantity("item2", Integer.valueOf(12));
+        demo2.addItemQuantity("item1", 11);
+        demo2.addItemQuantity("item2", 12);
         customerService.update(demo2);
 
         entityManager.flush();
         entityManager.clear();
 
         demo2 = customerService.findMust(demo2.getId());
-        assertTrue(demo2.getItemQuantityMap().size() == 2);
+        assertEquals(2, demo2.getItemQuantityMap().size());
 
 
         demo2.removeItemQuantity("item1");
-        demo2.addItemQuantity("item3", Integer.valueOf(13));
+        demo2.addItemQuantity("item3", 13);
         customerService.update(demo2);
 
         entityManager.flush();
         entityManager.clear();
 
-        assertTrue(demo2.getItemQuantityMap().size() == 2);
+        demo2 = customerService.findMust(demo2.getId());
+        assertEquals(2, demo2.getItemQuantityMap().size());
+
+
+        rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+        assertTrue(rootCompany.isPresent());
+        assertEquals(rootCompany.get().getCustomers().get(0), demo3);
     }
 }

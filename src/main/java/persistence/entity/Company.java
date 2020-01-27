@@ -35,6 +35,7 @@ public class Company extends LongIdEntity {
     private final List<Department> departments = new ArrayList<>();
 
     @OneToMany(mappedBy = "company")
+    @OrderBy(value = "name desc")
     private final List<Customer> customers = new ArrayList<>();
 
     public Company() {
@@ -57,6 +58,10 @@ public class Company extends LongIdEntity {
 
     public List<Employee> getEmployees() {
         return employees;
+    }
+
+    public List<Customer> getCustomers() {
+        return customers;
     }
 
     public void addEmployee(Employee employee) {
