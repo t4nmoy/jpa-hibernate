@@ -24,7 +24,6 @@ public class RepositoryAspect {
     @Autowired
     private EntityManager entityManager;
 
-
     @Pointcut("execution(public !void org.springframework.data.repository.Repository+.save*(..)) && args(tenantEntity,..)")
     public void publicSaveRepositoryMethodPointcut(TenantEntityBase tenantEntity) {
     }

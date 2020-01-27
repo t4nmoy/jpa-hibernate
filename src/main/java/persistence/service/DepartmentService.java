@@ -30,7 +30,6 @@ public class DepartmentService {
     }
 
     public Department create(@Valid Department department) {
-
         Assert.isNull(department.getId(), "employee id must be null");
         Assert.notNull(department.getCompany().getId(), "provided company id can't be null");
 
@@ -53,7 +52,7 @@ public class DepartmentService {
         return departmentRepository.save(department);
     }
 
-    public Department findMust(Long id) {
+    Department findMust(Long id) {
         return departmentRepository.findMust(id);
     }
 
