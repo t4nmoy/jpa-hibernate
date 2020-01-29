@@ -7,7 +7,6 @@ import org.hibernate.annotations.*;
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -37,9 +36,8 @@ public class Customer extends TenantEntityBase {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<PhoneNumber> phones = new HashSet<>();
 
-
     @Setter
-    @OneToMany(cascade = { CascadeType.PERSIST }, orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Contact> contacts = new ArrayList<>();

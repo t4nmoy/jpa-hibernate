@@ -162,12 +162,12 @@ class CustomerServiceTest {
         entityManager.flush();
         entityManager.clear();
 
-//        demoCustomer1 = customerService.findMust(demoCustomer1.getId());
-//        demoCustomer1.getContacts().remove(0);
-//        customerService.update(demoCustomer1);
-//
-//        entityManager.flush();
-//        entityManager.clear();
+        demoCustomer1 = customerService.findMust(demoCustomer1.getId());
+        demoCustomer1.getContacts().remove(0);
+        customerService.update(demoCustomer1);
+
+        entityManager.flush();
+        entityManager.clear();
 
         customerService.delete(demoCustomer1.getId());
 
