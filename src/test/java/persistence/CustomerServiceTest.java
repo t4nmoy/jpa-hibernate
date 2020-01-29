@@ -43,14 +43,14 @@ class CustomerServiceTest {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
         assertTrue(rootCompany.isPresent());
 
-        Customer demo3 = new Customer("demo3", rootCompany.get());
+        Customer demo3 = new Customer("demo3", CustomerType.WANDERING, rootCompany.get());
         demo3 = customerService.create(demo3);
 
-        Customer demo1 = new Customer("demo1", rootCompany.get());
+        Customer demo1 = new Customer("demo1", CustomerType.LOYAL, rootCompany.get());
         demo1 = customerService.create(demo1);
         assertNotNull(demo1.getId());
 
-        Customer demo2 = new Customer("demo2", rootCompany.get());
+        Customer demo2 = new Customer("demo2", CustomerType.IMPULSE, rootCompany.get());
         demo2 = customerService.create(demo2);
         assertNotNull(demo2.getId());
 
@@ -118,14 +118,14 @@ class CustomerServiceTest {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
         assertTrue(rootCompany.isPresent());
 
-        Customer demoCustomer1 = new Customer("demo", rootCompany.get());
+        Customer demoCustomer1 = new Customer("demo", CustomerType.DISCOUNT, rootCompany.get());
         demoCustomer1 = customerService.create(demoCustomer1);
         assertNotNull(demoCustomer1.getId());
 
         Company demoCompany = companyService.create("demo company", "root company", CompanyType.MARKETING);
         TenantContext.setTenantId(demoCompany.getId());
 
-        Customer demoCustomer2 = new Customer("demo", demoCompany);
+        Customer demoCustomer2 = new Customer("demo", CustomerType.LOYAL, demoCompany);
         demoCustomer2 = customerService.create(demoCustomer2);
         assertNotNull(demoCustomer2.getId());
 
@@ -141,23 +141,24 @@ class CustomerServiceTest {
 
     @Test
     @Transactional
-    void testNativeQuery() {
+    void testCascadeAndNativeQuery() {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
         assertTrue(rootCompany.isPresent());
 
-        Customer demoCustomer1 = new Customer("demoCustomer1", rootCompany.get());
+        Customer demoCustomer1 = new Customer("demoCustomer", CustomerType.LOYAL, rootCompany.get());
 
         List<Contact> contactsForCustomer1= Arrays.asList(
                 Contact.of(ContactType.HOME, "andromeda"),
-                Contact.of(ContactType.HOME, "milky way"));
+                Contact.of(ContactType.MOBILE, "milky way"));
 
         demoCustomer1.setContacts(contactsForCustomer1);
         demoCustomer1 = customerService.create(demoCustomer1);
         assertNotNull(demoCustomer1.getId());
 
-        Customer demoCustomer2 = new Customer("demoCustomer2", rootCompany.get());
+        Customer demoCustomer2 = new Customer("demoCustomer", CustomerType.DISCOUNT, rootCompany.get());
         demoCustomer2 = customerService.create(demoCustomer2);
         assertNotNull(demoCustomer2.getId());
+
 
         entityManager.flush();
         entityManager.clear();
@@ -174,5 +175,8 @@ class CustomerServiceTest {
         entityManager.flush();
         entityManager.clear();
 
+        List<String> customerNames = customerService.findByNameAndTypesIn("demoCustomer",
+                Arrays.asList("DISCOUNT", "WANDERING"));
+        assertEquals(1, customerNames.size());
     }
 }

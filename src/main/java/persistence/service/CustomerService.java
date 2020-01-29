@@ -10,6 +10,7 @@ import persistence.entity.Customer;
 import persistence.repository.CustomerRepository;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Service
 @Validated
@@ -60,5 +61,9 @@ public class CustomerService {
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<String> findByNameAndTypesIn(String name, List<String> customerTypes) {
+        return repository.findByNameAndTypesIn(name, customerTypes);
     }
 }

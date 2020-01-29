@@ -2,12 +2,15 @@ package persistence.entity;
 
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Entity
 public class Contact extends LongIdEntity {
 
     private String address;
 
+    @Enumerated(EnumType.STRING)
     private ContactType contactType;
 
     public Contact() {

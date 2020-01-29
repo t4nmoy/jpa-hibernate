@@ -2,7 +2,7 @@ package persistence.entity;
 
 public enum ContactType {
 
-    HOME("home"), OFFICE("office"), MOBILE("mobile");
+    HOME("home"), OFFICE("office"), MOBILE("mobile"), OTHER("other");
 
     private final String title;
 

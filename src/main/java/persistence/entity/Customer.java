@@ -7,6 +7,7 @@ import org.hibernate.annotations.*;
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -17,11 +18,18 @@ import java.util.*;
 @RequiredArgsConstructor
 @FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = "long"))
 @Filter(name = "tenantFilter", condition = "tenant_id =:tenantId")
+@Table(name = "customer")
 public class Customer extends TenantEntityBase {
 
     @NonNull
     @NotBlank(message = "customer name is required")
     private String name;
+
+    @NonNull
+    @NotNull(message = "customer type is required")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private CustomerType type;
 
     @NonNull
     @NotNull(message = "company is required")
@@ -47,9 +55,10 @@ public class Customer extends TenantEntityBase {
     }
 
     public void addItemQuantity(String itemName, Integer quantity) {
-        if (!this.itemQuantityMap.containsKey(itemName)) {
-            this.itemQuantityMap.put(itemName, quantity);
+        if (this.itemQuantityMap.containsKey(itemName)) {
+            return;
         }
+        this.itemQuantityMap.put(itemName, quantity);
     }
 
     public void removeItemQuantity(String itemName) {
