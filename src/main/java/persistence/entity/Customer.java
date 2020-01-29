@@ -1,18 +1,12 @@
 package persistence.entity;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
+import lombok.*;
+import org.hibernate.annotations.*;
 
-import javax.persistence.ElementCollection;
+import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -39,6 +33,13 @@ public class Customer extends TenantEntityBase {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<PhoneNumber> phones = new HashSet<>();
+
+
+    @Setter
+    @OneToMany(cascade = { CascadeType.PERSIST }, orphanRemoval = true)
+    @JoinColumn(name = "customer_id")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Contact> contacts = new ArrayList<>();
 
     public Map<String, Integer> getItemQuantityMap() {
         return Collections.unmodifiableMap(itemQuantityMap);

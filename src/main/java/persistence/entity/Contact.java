@@ -1,19 +1,25 @@
 package persistence.entity;
 
-import javax.persistence.*;
+
+import javax.persistence.Entity;
 
 @Entity
-public class Contact {
+public class Contact extends LongIdEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String phoneNumber;
+    private String address;
 
     private ContactType contactType;
 
-    @ManyToOne
-    private Profile profile;
+    public Contact() {
 
+    }
+
+    private Contact(ContactType contactType, String address) {
+        this.contactType = contactType;
+        this.address = address;
+    }
+
+    public static Contact of(ContactType contactType, String address) {
+        return new Contact(contactType, address);
+    }
 }
