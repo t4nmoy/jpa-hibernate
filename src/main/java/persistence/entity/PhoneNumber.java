@@ -2,6 +2,8 @@ package persistence.entity;
 
 
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Objects;
 
 @Embeddable
@@ -13,6 +15,7 @@ public class PhoneNumber {
 
     private String number;
 
+    @Enumerated(EnumType.STRING)
     private Type type;
 
     public PhoneNumber(){

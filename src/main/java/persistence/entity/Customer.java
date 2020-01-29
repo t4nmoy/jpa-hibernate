@@ -6,10 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -29,9 +26,11 @@ public class Customer extends AuditableEntity {
     @ManyToOne
     private Company company;
 
+    @Column(name = "item_quantity")
     @ElementCollection(fetch = FetchType.EAGER)
     private Map<String, Integer> itemQuantityMap = new HashMap<>();
 
+    @Column(name = "phone_number")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<PhoneNumber> phones = new HashSet<>();
 
@@ -46,9 +45,7 @@ public class Customer extends AuditableEntity {
     }
 
     public void removeItemQuantity(String itemName) {
-        if (this.itemQuantityMap.containsKey(itemName)) {
-            this.itemQuantityMap.remove(itemName);
-        }
+        this.itemQuantityMap.remove(itemName);
     }
 
     public Set<PhoneNumber> getPhones() {
@@ -56,8 +53,6 @@ public class Customer extends AuditableEntity {
     }
 
     public void addPhone(PhoneNumber phone) {
-        if (!this.phones.contains(phone)) {
-            this.phones.add(phone);
-        }
+        this.phones.add(phone);
     }
 }

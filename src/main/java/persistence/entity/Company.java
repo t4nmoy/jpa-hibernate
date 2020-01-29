@@ -65,7 +65,6 @@ public class Company extends LongIdEntity {
     }
 
     public void addEmployee(Employee employee) {
-
         Assert.isTrue(employee.getCompany() == null || this.equals(employee.getCompany()),
                 String.format("employee's company must be null or should be %s", this));
 
