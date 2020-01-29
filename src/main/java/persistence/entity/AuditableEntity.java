@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
@@ -25,8 +26,9 @@ abstract class AuditableEntity extends LongIdEntity {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant createdDate = Instant.now();
+    private Instant createdDate;
 
-    private Instant lastModifiedDate = Instant.now();
+    @LastModifiedDate
+    private Instant lastModifiedDate;
 
 }

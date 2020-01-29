@@ -1,11 +1,12 @@
 package persistence.entity;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.*;
 
+import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,9 @@ import java.util.*;
 @Getter
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Customer extends AuditableEntity {
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = "long"))
+@Filter(name = "tenantFilter", condition = "tenant_id =:tenantId")
+public class Customer extends TenantEntityBase {
 
     @NonNull
     @NotBlank(message = "customer name is required")
@@ -33,6 +36,13 @@ public class Customer extends AuditableEntity {
     @Column(name = "phone_number")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<PhoneNumber> phones = new HashSet<>();
+
+
+    @Setter
+    @OneToMany(cascade = { CascadeType.PERSIST }, orphanRemoval = true)
+    @JoinColumn(name = "customer_id")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Contact> contacts = new ArrayList<>();
 
     public Map<String, Integer> getItemQuantityMap() {
         return Collections.unmodifiableMap(itemQuantityMap);

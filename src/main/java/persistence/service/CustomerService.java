@@ -2,7 +2,6 @@ package persistence.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -19,17 +18,21 @@ public class CustomerService {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
-    @Autowired
-    private CustomerRepository repository;
+    private final CustomerRepository repository;
 
-    @Autowired
-    private CompanyService companyService;
+    private final CompanyService companyService;
+
+    public CustomerService(CustomerRepository repository, CompanyService companyService) {
+        this.repository = repository;
+        this.companyService = companyService;
+    }
 
     public Customer create(@Valid Customer customer) {
         Assert.isNull(customer.getId(), "customer id must be null");
         Assert.isTrue(customer.getCompany().getId() != null, "customer company id is required");
 
         companyService.findMust(customer.getCompany().getId());
+
         customer = repository.save(customer);
         logger.debug("new customer is created : {}", customer);
         return customer;
@@ -45,7 +48,18 @@ public class CustomerService {
         return customer;
     }
 
+    @Transactional(readOnly = true)
     public Customer findMust(Long id) {
         return repository.findMust(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Customer findByName(String name) {
+        return repository.findByName(name);
+    }
+
+    public void delete(Long id) {
+        //Customer customer = findMust(id);
+        repository.deleteById(id);
     }
 }
