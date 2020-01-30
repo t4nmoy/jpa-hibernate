@@ -25,6 +25,9 @@ public class Customer extends TenantEntityBase {
     @NotBlank(message = "customer name is required")
     private String name;
 
+    @Setter
+    private Long number;
+
     @NonNull
     @Setter
     @NotNull(message = "customer type is required")

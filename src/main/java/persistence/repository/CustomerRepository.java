@@ -17,4 +17,10 @@ public interface CustomerRepository extends ExtendedBaseRepository<Customer, Lon
     @Query(value = "update customer set type = ?2 where company_id = ?1", nativeQuery = true)
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     void changeType(Long companyId, String customerType);
+
+    @Query(value = "update customer set number = (select next_no.no from " +
+            "(select ifnull(max(number), 0) + 1 as no from customer) next_no) " +
+            "where id = ?1", nativeQuery = true)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    void updateNumber(Long customerId);
 }

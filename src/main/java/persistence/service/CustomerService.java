@@ -72,4 +72,8 @@ public class CustomerService {
     public void changeType(Long companyId, CustomerType customerType) {
         repository.changeType(companyId, customerType.name());
     }
+
+    public void updateNumber(Long customerId) {
+        repository.updateNumber(customerId);
+    }
 }

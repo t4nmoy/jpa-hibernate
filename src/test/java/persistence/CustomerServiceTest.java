@@ -14,6 +14,10 @@ import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -203,5 +207,49 @@ class CustomerServiceTest {
         rootCompany.get().setCode("2222222");
         companyService.update(company);
         entityManager.flush();
+    }
+
+    /**
+     * does not work on hsql
+     */
+    //@Test
+    @Transactional
+    void concurrentUpdateTest() {
+        Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+        assertTrue(rootCompany.isPresent());
+        Customer customer = new Customer("customer", CustomerType.IMPULSE, rootCompany.get());
+        customer.setNumber(1L);
+        customerService.create(customer);
+
+        entityManager.flush();
+        entityManager.clear();
+
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+
+        Long customerId = customer.getId();
+        IntStream.range(0, 9).forEach(number -> {
+            System.out.println(number);
+            executor.submit(() -> {
+                System.out.println("updating customer number to next max");
+                customerService.updateNumber(customerId);
+            });
+        });
+
+        try {
+            executor.shutdown();
+            executor.awaitTermination(60, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (!executor.isTerminated()) {
+                System.err.println("killing non-finished tasks");
+            }
+            executor.shutdownNow();
+        }
+
+        customer = customerService.findMust(customer.getId());
+        assertEquals(10, customer.getNumber());
+
     }
 }
