@@ -179,4 +179,29 @@ class CustomerServiceTest {
                 Arrays.asList("DISCOUNT", "WANDERING"));
         assertEquals(1, customerNames.size());
     }
+
+    @Test
+    @Transactional
+    void testModifyingQuery() {
+        Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+        assertTrue(rootCompany.isPresent());
+
+        Customer demoCustomer1 = new Customer("demo customer 1", CustomerType.LOYAL, rootCompany.get());
+        customerService.create(demoCustomer1);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        demoCustomer1 = customerService.findMust(demoCustomer1.getId());
+        demoCustomer1.setType(CustomerType.DISCOUNT);
+
+        Company company = companyService.findMust(rootCompany.get().getId());
+        company.setCode("1111111");
+
+        customerService.changeType(company.getId(), CustomerType.WANDERING);
+
+        rootCompany.get().setCode("2222222");
+        companyService.update(company);
+        entityManager.flush();
+    }
 }

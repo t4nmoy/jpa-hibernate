@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import persistence.entity.Customer;
+import persistence.entity.CustomerType;
 import persistence.repository.CustomerRepository;
 
 import javax.validation.Valid;
@@ -63,7 +64,12 @@ public class CustomerService {
         repository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<String> findByNameAndTypesIn(String name, List<String> customerTypes) {
         return repository.findByNameAndTypesIn(name, customerTypes);
+    }
+
+    public void changeType(Long companyId, CustomerType customerType) {
+        repository.changeType(companyId, customerType.name());
     }
 }

@@ -2,5 +2,11 @@ package persistence.entity;
 
 public enum CustomerType {
 
-    LOYAL, IMPULSE, DISCOUNT, WANDERING
+    LOYAL,
+
+    IMPULSE,
+
+    DISCOUNT,
+
+    WANDERING
 }

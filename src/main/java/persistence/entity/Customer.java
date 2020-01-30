@@ -26,6 +26,7 @@ public class Customer extends TenantEntityBase {
     private String name;
 
     @NonNull
+    @Setter
     @NotNull(message = "customer type is required")
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -34,13 +35,12 @@ public class Customer extends TenantEntityBase {
     @NonNull
     @NotNull(message = "company is required")
     @ManyToOne
+    @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(name = "item_quantity")
     @ElementCollection(fetch = FetchType.EAGER)
     private Map<String, Integer> itemQuantityMap = new HashMap<>();
 
-    @Column(name = "phone_number")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<PhoneNumber> phones = new HashSet<>();
 

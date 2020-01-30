@@ -77,6 +77,10 @@ public class Company extends LongIdEntity {
         return departments;
     }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     @Override
     public String toString() {
         return "Company{" +
