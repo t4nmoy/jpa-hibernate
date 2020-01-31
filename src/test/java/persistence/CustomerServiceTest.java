@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
@@ -277,16 +278,17 @@ class CustomerServiceTest {
         assertEquals(customers.get(0), demoCustomer3);
 
 
-        customers = customerService.findAllWithPagination(PageRequest.of(0, 2,
+        Page<Customer> all = customerService.findAllWithPagination(PageRequest.of(0, 2,
                 Sort.by(Sort.Direction.DESC, "name")));
 
-        assertEquals(2, customers.size());
-        assertEquals(demoCustomer2, customers.get(0));
-        assertEquals(demoCustomer1, customers.get(1));
+        assertEquals(2, all.getContent().size());
+        assertEquals(demoCustomer2, all.getContent().get(0));
+        assertEquals(demoCustomer1, all.getContent().get(1));
+        assertEquals(2, all.getTotalPages());
 
-        customers = customerService.findAllWithPagination(PageRequest.of(1, 2,
+        all = customerService.findAllWithPagination(PageRequest.of(1, 2,
                 Sort.by(Sort.Direction.DESC, "name")));
-        assertEquals(1, customers.size());
-        assertEquals(demoCustomer3, customers.get(0));
+        assertEquals(1, all.getContent().size());
+        assertEquals(demoCustomer3, all.getContent().get(0));
     }
 }

@@ -1,5 +1,6 @@
 package persistence.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
@@ -34,5 +35,5 @@ public interface CustomerRepository extends ExtendedBaseRepository<Customer, Lon
             countQuery = "SELECT count(*) FROM customer",
             nativeQuery = true
     )
-    List<Customer> findAllWithPagination(Pageable pageable);
+    Page<Customer> findAllWithPagination(Pageable pageable);
 }

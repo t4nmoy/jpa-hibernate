@@ -2,6 +2,7 @@ package persistence.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -85,7 +86,7 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public List<Customer> findAllWithPagination(Pageable pageable) {
+    public Page<Customer> findAllWithPagination(Pageable pageable) {
         return repository.findAllWithPagination(pageable);
     }
 }
