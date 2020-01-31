@@ -212,7 +212,7 @@ class CustomerServiceTest {
     /**
      * does not work on hsql
      */
-    //@Test
+    @Test
     @Transactional
     void concurrentUpdateTest() {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
@@ -228,13 +228,7 @@ class CustomerServiceTest {
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
         Long customerId = customer.getId();
-        IntStream.range(0, 9).forEach(number -> {
-            System.out.println(number);
-            executor.submit(() -> {
-                System.out.println("updating customer number to next max");
-                customerService.updateNumber(customerId);
-            });
-        });
+        IntStream.range(0, 9).forEach(number -> executor.submit(() -> customerService.updateNumber(customerId)));
 
         try {
             executor.shutdown();
