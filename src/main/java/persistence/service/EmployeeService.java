@@ -13,6 +13,8 @@ import persistence.entity.Employee;
 import persistence.query.CustomCriteria;
 import persistence.repository.EmployeeRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -30,9 +32,13 @@ public class EmployeeService {
 
     private final DepartmentService departmentService;
 
-    public EmployeeService(EmployeeRepository employeeRepository, CompanyService companyService, @Lazy DepartmentService departmentService) {
+    private final EntityManager entityManager;
+
+    public EmployeeService(EmployeeRepository employeeRepository, CompanyService companyService,
+                           EntityManager entityManager, @Lazy DepartmentService departmentService) {
         this.employeeRepository = employeeRepository;
         this.companyService = companyService;
+        this.entityManager = entityManager;
         this.departmentService = departmentService;
     }
 
@@ -97,4 +103,12 @@ public class EmployeeService {
         return employeeRepository.findMust(id);
     }
 
+    public List<Employee> findEmployeeByEmails(List<String> emails) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Employee> query = builder.createQuery(Employee.class);
+        Root<Employee> employee = query.from(Employee.class);
+        Path<String> emailPath = employee.get("email");
+        query.select(employee).where(builder.or(emails.stream().map(email -> builder.equal(emailPath, email)).toArray(Predicate[]::new)));
+        return entityManager.createQuery(query).getResultList();
+    }
 }

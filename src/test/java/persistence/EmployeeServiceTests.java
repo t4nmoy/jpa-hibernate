@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import persistence.entity.*;
 import persistence.query.CustomCriteria;
 import persistence.query.QueryOperation;
@@ -15,6 +14,7 @@ import persistence.service.EmployeeService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -49,10 +49,10 @@ class EmployeeServiceTests {
 	void curdEmployeeTest() {
 
 		Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
-        Assert.isTrue(rootCompany.isPresent(), "company must not be null");
+        assertTrue(rootCompany.isPresent());
 
-		Optional<Department> department = departmentService.findByCode("MKT");
-		Assert.isTrue(department.isPresent(), "department must not be null");
+		Optional<Department> department = departmentService.findByCode("ROOT_DEPT");
+		assertTrue(department.isPresent());
 
 		Employee employee = Employee.builder()
 				.email("john@wonderland.org")
@@ -169,6 +169,58 @@ class EmployeeServiceTests {
 		);
 		employees = employeeService.findAll(criteriaList);
 		assertEquals(2, employees.size());
+	}
+
+	@Test
+	@Transactional
+	void testCriteriaApi() {
+		Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+		assertTrue(rootCompany.isPresent());
+
+		Optional<Department> department = departmentService.findByCode("ROOT_DEPT");
+		assertTrue(department.isPresent());
+
+		Employee jody = Employee.builder()
+				.email("jody@wonderland.org")
+				.name("jody")
+				.designation(Designation.HR)
+				.employeeType(EmployeeType.INTERN)
+				.company(rootCompany.get())
+				.department(department.get())
+				.build();
+
+		jody = employeeService.create(jody);
+		assertNotNull(jody.getId());
+
+		Employee colin = Employee.builder()
+				.email("colin@wonderland.org")
+				.name("colin")
+				.designation(Designation.MANAGER)
+				.employeeType(EmployeeType.PERMANENT)
+				.company(rootCompany.get())
+				.department(department.get())
+				.build();
+
+		colin = employeeService.create(colin);
+		assertNotNull(colin.getId());
+
+
+		Employee justin = Employee.builder()
+				.email("justin@wonderland.org")
+				.name("justin")
+				.designation(Designation.TEAM_LEAD)
+				.employeeType(EmployeeType.PERMANENT)
+				.company(rootCompany.get())
+				.department(department.get())
+				.build();
+
+		justin = employeeService.create(justin);
+		assertNotNull(justin.getId());
+
+
+		List<Employee> employees = employeeService.findEmployeeByEmails(Arrays.asList(jody.getEmail(), justin.getEmail()));
+		assertEquals(2, employees.size());
+
 	}
 
 }

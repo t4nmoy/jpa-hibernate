@@ -3,10 +3,13 @@ package persistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import persistence.entity.*;
 import persistence.service.CompanyService;
 import persistence.service.DepartmentService;
 import persistence.service.EmployeeService;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,10 +42,12 @@ public class TestData {
     }
 
     private void createEmployees() {
-        Company rootCompany = companyService.findByCode(Company.ROOT_COMPANY).get();
+        Optional<Company> companyOpt = companyService.findByCode(Company.ROOT_COMPANY);
+        Assert.isTrue(companyOpt.isPresent(), "root company must be present");
+        Company rootCompany = companyOpt.get();
 
         Department rootMarketingDept = Department.builder()
-                .code("MKT")
+                .code("ROOT_DEPT")
                 .title("marketing dept")
                 .company(rootCompany)
                 .build();
