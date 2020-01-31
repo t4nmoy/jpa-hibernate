@@ -1,5 +1,6 @@
 package persistence.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,7 @@ public interface CustomerRepository extends ExtendedBaseRepository<Customer, Lon
             "where id = ?1", nativeQuery = true)
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     void updateNumber(Long customerId);
+
+    @Query("select customer from Customer customer")
+    List<Customer> findAllSortByName(Sort sort);
 }

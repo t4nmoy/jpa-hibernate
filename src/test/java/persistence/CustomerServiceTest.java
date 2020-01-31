@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.transaction.annotation.Transactional;
 import persistence.entity.*;
 import persistence.service.CompanyService;
@@ -212,7 +214,7 @@ class CustomerServiceTest {
     /**
      * does not work on hsql
      */
-    @Test
+    //@Test
     @Transactional
     void concurrentUpdateTest() {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
@@ -244,6 +246,35 @@ class CustomerServiceTest {
 
         customer = customerService.findMust(customer.getId());
         assertEquals(10, customer.getNumber());
+
+    }
+
+    @Test
+    @Transactional
+    void testSortingAndPaging() {
+        Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+        assertTrue(rootCompany.isPresent());
+
+        Customer demoCustomer1 = new Customer("demoCustomer 1", CustomerType.DISCOUNT, rootCompany.get());
+        demoCustomer1 = customerService.create(demoCustomer1);
+        assertNotNull(demoCustomer1.getId());
+
+        Customer demoCustomer2 = new Customer("demoCustomer 2", CustomerType.LOYAL, rootCompany.get());
+        demoCustomer2 = customerService.create(demoCustomer2);
+        assertNotNull(demoCustomer2.getId());
+
+        Customer demoCustomer3 = new Customer("demoCustomer", CustomerType.IMPULSE, rootCompany.get());
+        demoCustomer3 = customerService.create(demoCustomer3);
+        assertNotNull(demoCustomer3.getId());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        List<Customer> customers = customerService.findAllSortByName(Sort.by(Sort.Direction.DESC, "name"));
+        assertEquals(customers.get(0), demoCustomer2);
+
+        customers = customerService.findAllSortByName(JpaSort.unsafe(Sort.Direction.ASC, "LENGTH(name)"));
+        assertEquals(customers.get(0), demoCustomer3);
 
     }
 }
