@@ -1,9 +1,11 @@
 package persistence;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.transaction.annotation.Transactional;
@@ -214,7 +216,8 @@ class CustomerServiceTest {
     /**
      * does not work on hsql
      */
-    //@Test
+    @Disabled
+    @Test
     @Transactional
     void concurrentUpdateTest() {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
@@ -226,9 +229,7 @@ class CustomerServiceTest {
         entityManager.flush();
         entityManager.clear();
 
-
         ExecutorService executor = Executors.newFixedThreadPool(10);
-
         Long customerId = customer.getId();
         IntStream.range(0, 9).forEach(number -> executor.submit(() -> customerService.updateNumber(customerId)));
 
@@ -246,7 +247,6 @@ class CustomerServiceTest {
 
         customer = customerService.findMust(customer.getId());
         assertEquals(10, customer.getNumber());
-
     }
 
     @Test
@@ -276,5 +276,17 @@ class CustomerServiceTest {
         customers = customerService.findAllSortByName(JpaSort.unsafe(Sort.Direction.ASC, "LENGTH(name)"));
         assertEquals(customers.get(0), demoCustomer3);
 
+
+        customers = customerService.findAllWithPagination(PageRequest.of(0, 2,
+                Sort.by(Sort.Direction.DESC, "name")));
+
+        assertEquals(2, customers.size());
+        assertEquals(demoCustomer2, customers.get(0));
+        assertEquals(demoCustomer1, customers.get(1));
+
+        customers = customerService.findAllWithPagination(PageRequest.of(1, 2,
+                Sort.by(Sort.Direction.DESC, "name")));
+        assertEquals(1, customers.size());
+        assertEquals(demoCustomer3, customers.get(0));
     }
 }
