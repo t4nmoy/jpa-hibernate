@@ -8,6 +8,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
   
 * [Running Tests](#running-tests)
 * [Creating abstract base entity](#abstract-base-entity)
+* [Creating long id base entity](#long-id-base-entity)
 
 
 ## Running Tests
@@ -81,4 +82,38 @@ public abstract class BaseEntity<ID extends Serializable> extends IsEntity<ID> {
         setId(id);
     }
 }
+```
+
+##Long Id Base Entity
+> If any Entity needs a ```Long``` primary key it can extends ```LongIdEntity```
+
+```java
+@MappedSuperclass
+public abstract class LongIdEntity extends BaseEntity<Long> {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
+
+    public LongIdEntity() {
+
+    }
+
+    protected LongIdEntity(Long id) {
+        super(id);
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+       this.id = id;
+    }
+}
+
 ```
