@@ -84,7 +84,7 @@ public abstract class BaseEntity<ID extends Serializable> extends IsEntity<ID> {
 }
 ```
 
-##Long Id Base Entity
+## Long Id Base Entity
 > If any Entity needs a ```Long``` primary key it can extends ```LongIdEntity```
 
 ```java
