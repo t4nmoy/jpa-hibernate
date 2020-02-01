@@ -13,6 +13,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Using Lombok Annotations](#using-lombok-annotations)
 * [Using Custom Enum Converter](#using-custom-enum-converter)
 * [Multi Tenancy Using Spring Data Filter And AOP](#multi-tenancy-using-spring-data-filter-and-aop)
+* [Adding Custom Methods To All Repositories And Using Spring Data Specification](#adding-custom-methods-to-all-repositories-and-using-spring-data-specification)
 
 
 
@@ -461,5 +462,102 @@ Then we can use the entity as follows
 For a web app which is protected by an authorization token we can parse the jwt token and get the tenant id from 
 the token and set the tenant id using ```TenantContext.setTenantId(companyId);```
 
+## Adding Custom Methods To All Repositories And Using Spring Data Specification
+
+To add custom methods to all repositories first we need to create an interface annotated with @NoRepositoryBean as follows
+
+```java
+@NoRepositoryBean
+public interface ExtendedBaseRepository <T, ID extends Serializable> extends ExtendedJpaRepository<T, ID> {
+    List<T> findAll(List<CustomCriteria> filters);
+}
+```
+Then we need to implemented it as follows
+
+```java
+public class ExtendedBaseRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements ExtendedBaseRepository<T, ID> {
+
+    private Map<QueryOperation, CriteriaOperation<T>> operations = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    public ExtendedBaseRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
+       super(entityInformation, entityManager);
+       this.registerQueryOperations();
+    }
+
+    private void registerQueryOperations() {
+        operations.put(QueryOperation.GREATER_THAN, new GreaterThanOperation<>());
+        operations.put(QueryOperation.EQUAL, new EqualsOperation<>());
+        operations.put(QueryOperation.LESS_THAN, new LessThanOperation<>());
+        operations.put(QueryOperation.GREATER_THAN_EQUAL, new GreaterThanEqualOperation<>());
+        operations.put(QueryOperation.LESS_THAN_EQUAL, new LessThanEqualOperation<>());
+        operations.put(QueryOperation.NOT_EQUAL, new NotEqualOperation<>());
+        operations.put(QueryOperation.MATCH, new MatchOperation<>());
+        operations.put(QueryOperation.MATCH_START, new MatchStartOperation<>());
+        operations.put(QueryOperation.MATCH_END, new MatchEndOperation<>());
+        operations.put(QueryOperation.CONTAINS, new ContainsOperation<>());
+        operations.put(QueryOperation.NOT_CONTAINS, new NotContainsOperation<>());
+    }
+
+    private Specification<T> getSpecification(List<CustomCriteria> criteriaList) {
+        return (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            for (CustomCriteria criteria : criteriaList) {
+                if (operations.get(criteria.getOperation()) == null) {
+                    throw new OperationNotSupportedException(
+                            String.format("no handler is registered for operation : %s",
+                            criteria.getOperation())
+                    );
+                }
+                predicates.add(operations.get(criteria.getOperation()).toPredicate(root, builder, criteria));
+            }
+            return builder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
 
 
+    @Override
+    public List<T> findAll(List<CustomCriteria> filters) {
+        return this.findAll(getSpecification(filters));
+    }
+}
+```
+
+Now we need to enable it from the configuration class 
+
+```java
+@SpringBootApplication
+@EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
+@EnableJpaRepositories(repositoryBaseClass = ExtendedBaseRepositoryImpl.class)
+public class JpaHibernateApplication {
+
+}
+```
+
+For using spring data ```Specification``` we need to pass an instance of it to the spring data methods.
+To generate an instance of ```Specification``` here we add some helper methods. We register all the supported filters as follows
+
+```
+ private void registerQueryOperations() {
+        operations.put(QueryOperation.GREATER_THAN, new GreaterThanOperation<>());
+        operations.put(QueryOperation.EQUAL, new EqualsOperation<>());
+        operations.put(QueryOperation.LESS_THAN, new LessThanOperation<>());
+        operations.put(QueryOperation.GREATER_THAN_EQUAL, new GreaterThanEqualOperation<>());
+        operations.put(QueryOperation.LESS_THAN_EQUAL, new LessThanEqualOperation<>());
+        operations.put(QueryOperation.NOT_EQUAL, new NotEqualOperation<>());
+        operations.put(QueryOperation.MATCH, new MatchOperation<>());
+        operations.put(QueryOperation.MATCH_START, new MatchStartOperation<>());
+        operations.put(QueryOperation.MATCH_END, new MatchEndOperation<>());
+        operations.put(QueryOperation.CONTAINS, new ContainsOperation<>());
+        operations.put(QueryOperation.NOT_CONTAINS, new NotContainsOperation<>());
+    }
+ ```
+ 
+ So, now we can implement our custom repository method as follows
+ 
+ ```
+  @Override
+     public List<T> findAll(List<CustomCriteria> filters) {
+         return this.findAll(getSpecification(filters));
+     }
+```    
