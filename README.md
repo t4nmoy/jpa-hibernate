@@ -11,6 +11,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Creating LongIdEntity Base Class](#long-id-base-entity)
 * [Entity Using LongIdEntity Base Class](#entity-using-long-id-base-entity)
 * [Using Lombok Annotations](#using-lombok-annotations)
+* [Using Custom Enum Converter](#using-custom-enum-converter)
 
 
 ## Running Tests
@@ -234,3 +235,35 @@ Employee justin = Employee.builder()
 ``` 
 
 > when we need to use ```@NoArgsConstructor``` annotation with a ```@Builder``` annotation then we must put a ```@AllArgsConstructor``` annotation also, because builder pattern needs a all args constructor internally
+
+## Using Custom Enum Converter
+
+We can use custom enum converter for a enum type entity property. 
+
+```java
+@Converter(autoApply = true)
+public class CompanyTypeConverter implements AttributeConverter<CompanyType, String> {
+
+    @Override
+    public String convertToDatabaseColumn(CompanyType companyType) {
+        if (companyType == null) {
+            return null;
+        }
+        return companyType.getCode();
+    }
+
+    @Override
+    public CompanyType convertToEntityAttribute(String code) {
+        if (code == null){
+            return null;
+        }
+        return Stream.of(CompanyType.values())
+                .filter(c -> c.getCode().equals(code))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
+    }
+}
+
+```
+
+ex: ```private CompanyType companyType;```
