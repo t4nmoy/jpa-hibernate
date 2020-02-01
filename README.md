@@ -621,7 +621,8 @@ To generate an instance of ```Specification``` here we add some helper methods. 
 
 ## Using Batch Size Annotation
 
-We cas use ```@BatchSize``` annotation to solve n + 1 query problem to optimize performance if necessary
+We cas use ```@BatchSize``` annotation to solve n + 1 query problem to optimize performance if necessary.
+Generated query will use sql in operator to achieve this.
 
 ```
 @OneToMany(
