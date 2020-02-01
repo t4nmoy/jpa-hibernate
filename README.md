@@ -565,7 +565,7 @@ To generate an instance of ```Specification``` here we add some helper methods. 
 ## Using Modifying Annotation
 
 ```
-@Query(value = "update customer set type = ?2 where company_id = ?1", nativeQuery = true)
+    @Query(value = "update customer set type = ?2 where company_id = ?1", nativeQuery = true)
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     void changeType(Long companyId, String customerType);
 
@@ -577,7 +577,7 @@ To generate an instance of ```Specification``` here we add some helper methods. 
 ```
 
 ```
- @Test
+    @Test
     @Transactional
     void testModifyingQuery() {
         Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
