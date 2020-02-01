@@ -12,6 +12,8 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Entity Using LongIdEntity Base Class](#entity-using-long-id-base-entity)
 * [Using Lombok Annotations](#using-lombok-annotations)
 * [Using Custom Enum Converter](#using-custom-enum-converter)
+* [Multi Tenancy Using Spring Data Filter And AOP](#multi-tenancy-using-spring-data-filter-and-aop)
+
 
 
 ## Running Tests
@@ -267,3 +269,71 @@ public class CompanyTypeConverter implements AttributeConverter<CompanyType, Str
 ```
 
 ex: ```private CompanyType companyType;```
+
+## Multi Tenancy Using Spring Data Filter And AOP
+
+We need to put the following code on an entity 
+```
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = "long"))
+@Filter(name = "tenantFilter", condition = "tenant_id =:tenantId")
+```
+                 
+Declare an ```@Aspect``` annotated class as follows
+
+```java
+@Aspect
+public class RepositoryAspect {
+
+    private final Logger logger = LoggerFactory.getLogger(RepositoryAspect.class);
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Pointcut("execution(public !void org.springframework.data.repository.Repository+.save*(..)) && args(tenantEntity,..)")
+    public void publicSaveRepositoryMethodPointcut(TenantEntityBase tenantEntity) {
+    }
+
+    @Before(value = "publicSaveRepositoryMethodPointcut(tenantEntity)", argNames = "tenantEntity")
+    public void publicSaveRepositoryMethod(TenantEntityBase tenantEntity) {
+        if (TenantContext.getTenantId() != null){
+            tenantEntity.setTenantId(TenantContext.getTenantId());
+            logger.debug("tenant id {} inserted into entity", TenantContext.getTenantId());
+        }
+    }
+
+    @Pointcut("execution(public * org.springframework.data.repository.Repository+.find*(..))")
+    public void publicFindRepositoryMethodPointcut() {
+    }
+
+    @Around("publicFindRepositoryMethodPointcut()")
+    public Object publicFindEntityRepositoryMethod(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            Session session = entityManager.unwrap(Session.class);
+            if (session != null && TenantContext.getTenantId() != null){
+                Filter filter = session.enableFilter("tenantFilter");
+                if (filter != null){
+                    filter.setParameter("tenantId", TenantContext.getTenantId());
+                }
+            }
+        }
+        catch (Exception ex){
+            throw new PersistenceException(ex.getMessage(), ex);
+        }
+
+        return pjp.proceed();
+    }
+}
+```
+
+Add a configuration class as follows
+
+```java
+@Configuration
+public class RepositoryAspectConfiguration {
+
+    @Bean
+    public RepositoryAspect repositoryAspect() {
+        return new RepositoryAspect();
+    }
+}
+```
