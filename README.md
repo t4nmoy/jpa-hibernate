@@ -15,6 +15,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Multi Tenancy Using Spring Data Filter And AOP](#multi-tenancy-using-spring-data-filter-and-aop)
 * [Adding Custom Methods To All Repositories And Using Spring Data Specification](#adding-custom-methods-to-all-repositories-and-using-spring-data-specification)
 * [Using Modifying Annotation](#using-modifying-annotation)
+* [Using Criteria Api](#using-criteria-api)
 
 
 ## Running Tests
@@ -602,4 +603,17 @@ To generate an instance of ```Specification``` here we add some helper methods. 
         entityManager.flush();
     }
     
+```
+
+## Using Criteria Api
+
+```
+  public List<Employee> findEmployeeByEmails(List<String> emails) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Employee> query = builder.createQuery(Employee.class);
+        Root<Employee> employee = query.from(Employee.class);
+        Path<String> emailPath = employee.get("email");
+        query.select(employee).where(builder.or(emails.stream().map(email -> builder.equal(emailPath, email)).toArray(Predicate[]::new)));
+        return entityManager.createQuery(query).getResultList();
+    }
 ```
