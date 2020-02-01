@@ -7,10 +7,10 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 
   
 * [Running Tests](#running-tests)
-* [Creating abstract base entity](#abstract-base-entity)
-* [Creating long id base entity](#long-id-base-entity)
-* [Entity using Long id base entity](#entity-using-long-id-base-entity)
-* [Using Lombok annotations ](#using-lombok-annotations)
+* [Creating Abstract Base Entity](#abstract-base-entity)
+* [Creating Long Id Base Entity](#long-id-base-entity)
+* [Entity Using Long Id Base Entity](#entity-using-long-id-base-entity)
+* [Using Lombok Annotations ](#using-lombok-annotations)
 
 
 ## Running Tests
