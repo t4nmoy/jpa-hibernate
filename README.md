@@ -16,6 +16,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Adding Custom Methods To All Repositories And Using Spring Data Specification](#adding-custom-methods-to-all-repositories-and-using-spring-data-specification)
 * [Using Modifying Annotation](#using-modifying-annotation)
 * [Using Criteria Api](#using-criteria-api)
+* [Using BatchSize Annotation To Solve N + 1 Problem](#using-batch-size-annotation)
 
 
 ## Running Tests
@@ -617,3 +618,18 @@ To generate an instance of ```Specification``` here we add some helper methods. 
         return entityManager.createQuery(query).getResultList();
     }
 ```
+
+## Using Batch Size Annotation
+
+We cas use ```@BatchSize``` annotation to solve n + 1 query problem to optimize performance if necessary
+
+```
+@OneToMany(
+            mappedBy = "company",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @BatchSize(size = 10)
+    private final List<Employee> employees = new ArrayList<>();
+```  
