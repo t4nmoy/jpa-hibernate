@@ -10,6 +10,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Creating abstract base entity](#abstract-base-entity)
 * [Creating long id base entity](#long-id-base-entity)
 * [Entity using Long id base entity](#entity-using-long-id-base-entity)
+* [Using Lombok annotations ](#using-lombok-annotations)
 
 
 ## Running Tests
@@ -145,4 +146,91 @@ public class Contact extends LongIdEntity {
 }
 ```
 
+## Using lombok annotations
 
+```java
+@Entity
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Employee extends AuditableEntity {
+
+    @NonNull
+    @NotEmpty(message = "email is required")
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+
+    private String name;
+
+    private Short age;
+
+    /**
+     * column will be of type {@link Integer}
+     *
+     * 1) no way to change the order of the enum values without touching database
+     * 2) new enum values can't be inserted in the middle of the enum list(it will break the meaning of enum values)
+     *
+     */
+    @Enumerated(EnumType.ORDINAL)
+    private EmployeeStatus status;
+
+    /**
+     * column will be of type {@link String}
+     *
+     * 1) order of the enum can be changed without touching database
+     * 2) new enum values can be inserted in the middle of the enum list
+     *
+     */
+    @Enumerated(EnumType.STRING)
+    private Designation designation;
+
+    private EmployeeType employeeType;
+
+    @NonNull
+    @NotNull(message = "company must not be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    public Company company;
+
+    @NonNull
+    @NotNull(message = "department is required")
+    @ManyToOne(optional = false)
+    private Department department;
+
+    @OneToOne
+    private Profile profile;
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public void setEmployeeType(EmployeeType employeeType) {
+        this.employeeType = employeeType;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id='" + this.getId() + '\'' +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", status=" + status +
+                '}';
+    }
+}
+```
+Then we can create objects using the following cde
+
+```
+Employee justin = Employee.builder()
+				.email("justin@wonderland.org")
+				.name("justin")
+				.designation(Designation.TEAM_LEAD)
+				.employeeType(EmployeeType.PERMANENT)
+				.company(rootCompany.get())
+				.department(department.get())
+				.build();
+
+``` 
+
+> when we need to use ```@NoArgsConstructor``` annotation with a ```@Builder``` annotation then we must put a ```@AllArgsConstructor``` annotation also, because builder pattern needs a all args constructor internally
