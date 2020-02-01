@@ -427,4 +427,39 @@ public class Customer extends TenantEntityBase {
 }
 ```
 
+Then we can use the entity as follows
+
+```
+    @Test
+    @Transactional
+    void testDataFilterWithAop() {
+        Optional<Company> rootCompany = companyService.findByCode(Company.ROOT_COMPANY);
+        assertTrue(rootCompany.isPresent());
+
+        Customer demoCustomer1 = new Customer("demo", CustomerType.DISCOUNT, rootCompany.get());
+        demoCustomer1 = customerService.create(demoCustomer1);
+        assertNotNull(demoCustomer1.getId());
+
+        Company demoCompany = companyService.create("demo company", "root company", CompanyType.MARKETING);
+        TenantContext.setTenantId(demoCompany.getId());
+
+        Customer demoCustomer2 = new Customer("demo", CustomerType.LOYAL, demoCompany);
+        demoCustomer2 = customerService.create(demoCustomer2);
+        assertNotNull(demoCustomer2.getId());
+
+        demoCustomer2.setTenantId(demoCompany.getId());
+        customerService.update(demoCustomer2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        Customer customer = customerService.findByName("demo");
+        assertEquals(demoCustomer2, customer);
+    }
+```
+
+For a web app which is protected by an authorization token we can parse the jwt token and get the tenant id from 
+the token and set the tenant id using ```TenantContext.setTenantId(companyId);```
+
+
 
