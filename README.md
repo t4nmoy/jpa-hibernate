@@ -9,6 +9,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Running Tests](#running-tests)
 * [Creating abstract base entity](#abstract-base-entity)
 * [Creating long id base entity](#long-id-base-entity)
+* [Entity using Long id base entity](#entity-using-long-id-base-entity)
 
 
 ## Running Tests
@@ -117,3 +118,31 @@ public abstract class LongIdEntity extends BaseEntity<Long> {
 }
 
 ```
+
+## Entity using Long id base entity
+
+```java
+@Entity
+public class Contact extends LongIdEntity {
+
+    private String address;
+
+    @Enumerated(EnumType.STRING)
+    private ContactType contactType;
+
+    public Contact() {
+
+    }
+
+    private Contact(ContactType contactType, String address) {
+        this.contactType = contactType;
+        this.address = address;
+    }
+
+    public static Contact of(ContactType contactType, String address) {
+        return new Contact(contactType, address);
+    }
+}
+```
+
+
