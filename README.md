@@ -1,3 +1,3 @@
-# jpa-hibernate
+# JPA and Hibernate with Spring Boot
 
-example project for jpa hibernate features
+Reference project for demonstrating JPA using Hibernate as an implementation with spring boot.
