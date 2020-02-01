@@ -204,7 +204,6 @@ class EmployeeServiceTests {
 		colin = employeeService.create(colin);
 		assertNotNull(colin.getId());
 
-
 		Employee justin = Employee.builder()
 				.email("justin@wonderland.org")
 				.name("justin")
@@ -217,10 +216,8 @@ class EmployeeServiceTests {
 		justin = employeeService.create(justin);
 		assertNotNull(justin.getId());
 
-
 		List<Employee> employees = employeeService.findEmployeeByEmails(Arrays.asList(jody.getEmail(), justin.getEmail()));
 		assertEquals(2, employees.size());
-
 	}
 
 }
