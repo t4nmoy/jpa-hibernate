@@ -14,7 +14,7 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Using Custom Enum Converter](#using-custom-enum-converter)
 * [Multi Tenancy Using Spring Data Filter And AOP](#multi-tenancy-using-spring-data-filter-and-aop)
 * [Adding Custom Methods To All Repositories And Using Spring Data Specification](#adding-custom-methods-to-all-repositories-and-using-spring-data-specification)
-
+* [Using Modifying Annotation](#using-modifying-annotation)
 
 
 ## Running Tests
@@ -561,3 +561,17 @@ To generate an instance of ```Specification``` here we add some helper methods. 
          return this.findAll(getSpecification(filters));
      }
 ```    
+
+## Using Modifying Annotation
+
+```
+@Query(value = "update customer set type = ?2 where company_id = ?1", nativeQuery = true)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    void changeType(Long companyId, String customerType);
+
+    @Query(value = "update customer set number = (select next_no.no from " +
+            "(select ifnull(max(number), 0) + 1 as no from customer) next_no) " +
+            "where id = ?1", nativeQuery = true)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    void updateNumber(Long customerId);
+```
