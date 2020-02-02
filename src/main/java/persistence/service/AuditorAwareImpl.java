@@ -1,4 +1,4 @@
-package persistence.entity;
+package persistence.service;
 
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;

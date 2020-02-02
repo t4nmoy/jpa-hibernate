@@ -5,7 +5,6 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 
 ## List of contents
 
-  
 * [Running Tests](#running-tests)
 * [Creating Abstract Base Entity](#abstract-base-entity)
 * [Creating LongIdEntity Base Class](#long-id-base-entity)
@@ -17,13 +16,13 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Using Modifying Annotation](#using-modifying-annotation)
 * [Using Criteria Api](#using-criteria-api)
 * [Using BatchSize Annotation To Solve N + 1 Problem](#using-batch-size-annotation)
+* [Entity Auditing Using Spring Data](#entity-auditing-using-spring-data)
 
 
 ## Running Tests
 * ``mvn test`` run all the tests
 * ``mvn -Dtest=ClassName test`` run test for a single test class
 * ``mvn -Dtest=ClassName#test1 test`` run a single test from a specific class 
-
 
 ## Abstract base entity
 
@@ -634,3 +633,53 @@ Generated query will use sql in operator to achieve this.
     @BatchSize(size = 10)
     private final List<Employee> employees = new ArrayList<>();
 ```  
+
+## Entity Auditing Using Spring Data
+
+Declare ```AuditableEntity``` base class
+
+```java
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+abstract class AuditableEntity extends LongIdEntity {
+
+    @CreatedBy
+    @Column(nullable = false, updatable = false)
+    private Long createdBy;
+
+    @LastModifiedBy
+    private Long lastModifiedBy;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Instant createdDate;
+
+    @LastModifiedDate
+    private Instant lastModifiedDate;
+
+}
+```
+
+Implement a class(```AuditorAwareImpl```) which implements ```AuditorAware``` interface
+
+```java
+@Component
+public class AuditorAwareImpl implements AuditorAware<Long> {
+
+    @Override
+    public Optional<Long> getCurrentAuditor() {
+        return Optional.of(10L);
+    }
+}
+```
+Then enable auditing by putting ```@EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")``` in
+configuration file as follows
+
+```java
+@SpringBootApplication
+@EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
+@EnableJpaRepositories(repositoryBaseClass = ExtendedBaseRepositoryImpl.class)
+public class JpaHibernateApplication {
+}
+```
