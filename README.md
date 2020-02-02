@@ -662,7 +662,7 @@ abstract class AuditableEntity extends LongIdEntity {
 ```
 
 Implement a class(```AuditorAwareImpl```) which implements ```AuditorAware``` interface. ```getCurrentAuditor```
-method should return the id of current logged in user or return something according to your application logic 
+method should return the id of current logged in user or should return something according to your application logic 
 
 ```java
 @Component
