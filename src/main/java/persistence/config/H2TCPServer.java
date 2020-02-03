@@ -36,9 +36,9 @@ public class H2TCPServer implements InitializingBean, DisposableBean {
             Class<?> serverClass = Class.forName("org.h2.tools.Server", true, loader);
             Method createServer = serverClass.getMethod("createTcpServer", String[].class);
             server =  createServer.invoke(null,
-                    new Object[] { new String[] { "-tcp", "-tcpAllowOthers"
-                             } });
+                    new Object[] { new String[] { "-tcp", "-tcpAllowOthers"} });
 
+            ReflectionUtils.findMethod(server.getClass(), "start").invoke(server, new Object[] {});
             logger.info("[H2TCPServer] started ......");
 
         } catch (ClassNotFoundException | LinkageError  e) {
