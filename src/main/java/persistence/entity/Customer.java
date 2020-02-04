@@ -23,6 +23,7 @@ public class Customer extends TenantEntityBase {
 
     @NonNull
     @NotBlank(message = "customer name is required")
+    @Column(nullable = false)
     private String name;
 
     @Setter

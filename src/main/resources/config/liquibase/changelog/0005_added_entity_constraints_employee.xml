@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="autoIncrement" value="true"/>
+
+    <changeSet id="0005" author="alice">
+
+        <addForeignKeyConstraint baseTableName="employee" baseColumnNames="company_id"
+                                 constraintName="fk_employee_company_id"
+                                 referencedTableName="company"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="employee" baseColumnNames="department_id"
+                                 constraintName="fk_employee_department_id"
+                                 referencedTableName="department"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="employee" baseColumnNames="profile_id"
+                                 constraintName="fk_employee_profile_id"
+                                 referencedTableName="profile"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

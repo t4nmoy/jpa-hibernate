@@ -51,7 +51,7 @@ public class JpaHibernateApplication {
 		executor.setCorePoolSize(appProperties.getCorePoolSize());
 		executor.setMaxPoolSize(appProperties.getMaxPoolSize());
 		executor.setQueueCapacity(appProperties.getQueueCapacity());
-		executor.setThreadNamePrefix("persistence-app-executor-");
+		executor.setThreadNamePrefix("asnyc-exec-");
 		return new ExceptionHandlingAsyncTaskExecutor(executor);
 	}
 
