@@ -8,9 +8,9 @@
 
     <property name="autoIncrement" value="true"/>
 
-    <changeSet id="0003" author="alice">
+    <changeSet id="0009" author="alice">
 
-        <createTable tableName="department">
+        <createTable tableName="contact">
 
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -20,20 +20,20 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="title" type="varchar(255)">
-                <constraints nullable="false"/>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true"/>
             </column>
 
-            <column name="code" type="varchar(50)">
-                <constraints unique="true" nullable="false"/>
+            <column name="contact_type" type="varchar(20)">
+                <constraints nullable="true"/>
             </column>
 
-            <column name="manager_id" type="bigint">
-                <constraints foreignKeyName="fk_department_employee_id" nullable="true" referencedTableName="employee" referencedColumnNames="id"/>
-            </column>
-
-            <column name="company_id" type="bigint">
-                <constraints foreignKeyName="fk_department_company_id" nullable="false" referencedTableName="company" referencedColumnNames="id"/>
+            <column name="customer_id" type="bigint">
+                <constraints
+                        foreignKeyName="fk_contact_customer_id"
+                        nullable="true"
+                        referencedTableName="customer"
+                        referencedColumnNames="id"/>
             </column>
 
         </createTable>

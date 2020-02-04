@@ -1,6 +1,7 @@
 package persistence.entity;
 
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +12,7 @@ public class Contact extends LongIdEntity {
     private String address;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "contact_type")
     private ContactType contactType;
 
     public Contact() {

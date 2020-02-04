@@ -11,19 +11,25 @@
     <changeSet id="0001" author="alice">
 
         <createTable tableName="company">
+
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+
             <column name="version" type="bigint">
-                <constraints nullable="false"></constraints>
+                <constraints nullable="false"/>
             </column>
+
             <column name="name" type="varchar(50)">
                 <constraints nullable="true"/>
             </column>
+
             <column name="code" type="varchar(50)">
                 <constraints unique="true" nullable="false"/>
             </column>
-            <column name="companyType" type="varchar(20)"></column>
+
+            <column name="company_type" type="varchar(20)"/>
+
         </createTable>
 
     </changeSet>

@@ -205,11 +205,11 @@ class CustomerServiceTest {
         demoCustomer1.setType(CustomerType.DISCOUNT);
 
         Company company = companyService.findMust(rootCompany.get().getId());
-        company.setCode("1111111");
+        company.setCode("111");
 
         customerService.changeType(company.getId(), CustomerType.WANDERING);
 
-        rootCompany.get().setCode("2222222");
+        rootCompany.get().setCode("222");
         companyService.update(company);
         entityManager.flush();
     }

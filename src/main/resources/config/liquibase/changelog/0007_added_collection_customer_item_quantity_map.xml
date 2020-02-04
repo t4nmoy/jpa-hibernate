@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="autoIncrement" value="true"/>
+
+    <changeSet id="0007" author="alice">
+
+        <createTable tableName="customer_item_quantity_map">
+
+            <column name="customer_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="item_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="item_quantity" type="int">
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+
+        <addPrimaryKey columnNames="customer_id, item_name" tableName="customer_item_quantity_map"/>
+
+        <createIndex indexName="idx_customer_item_quantity_map_customer_id"
+                     tableName="customer_item_quantity_map"
+                     unique="false">
+            <column name="customer_id" type="bigint"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="customer_id"
+                                 baseTableName="customer_item_quantity_map"
+                                 constraintName="fk_customer_item_quantity_map_customer_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="company"/>
+
+    </changeSet>
+
+</databaseChangeLog>

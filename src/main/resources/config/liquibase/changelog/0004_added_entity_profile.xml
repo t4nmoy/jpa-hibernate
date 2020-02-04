@@ -11,21 +11,31 @@
     <changeSet id="0004" author="alice">
 
         <createTable tableName="profile">
+
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+
             <column name="version" type="bigint">
-                <constraints nullable="false"></constraints>
+                <constraints nullable="false"/>
             </column>
+
             <column name="gender" type="varchar(20)">
                 <constraints nullable="true"/>
             </column>
-            <column name="notes" type="varchar(255)">
+
+            <column name="notes" type="longtext" defaultValue="">
                 <constraints nullable="true"/>
             </column>
+
             <column name="employee_id" type="bigint">
-                <constraints foreignKeyName="fk_profile_employee_id" nullable="true" referencedTableName="employee" referencedColumnNames="id"></constraints>
+                <constraints
+                        foreignKeyName="fk_profile_employee_id"
+                        nullable="true"
+                        referencedTableName="employee"
+                        referencedColumnNames="id"/>
             </column>
+
         </createTable>
 
     </changeSet>

@@ -5,7 +5,14 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="config/liquibase/changelog/0000_initial_schema.xml" relativeToChangelogFile="false"/>
-
+    <include file="config/liquibase/changelog/0001_added_entity_company.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0002_added_entity_employee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0003_added_entity_department.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0004_added_entity_profile.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0005_added_entity_constraints_employee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0006_added_entity_customer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0007_added_collection_customer_item_quantity_map.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0008_added_collection_customer_phones.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0009_added_entity_contact.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -17,6 +17,8 @@ include - Entity, Relationship, Various Annotations, JPQL, Entity Manager, Crite
 * [Using Criteria Api](#using-criteria-api)
 * [Using BatchSize Annotation To Solve N + 1 Problem](#using-batch-size-annotation)
 * [Entity Auditing Using Spring Data](#entity-auditing-using-spring-data)
+* [Expose H2 Database Through TCP Server To Access From Remote Process](#expose-h2-database-through-tcp-server-to-access-from-remote-process)
+* [Using Liquibase](#use-liquibase)
 
 
 ## Running Tests
@@ -594,11 +596,11 @@ To generate an instance of ```Specification``` here we add some helper methods. 
         demoCustomer1.setType(CustomerType.DISCOUNT);
 
         Company company = companyService.findMust(rootCompany.get().getId());
-        company.setCode("1111111");
+        company.setCode("111");
 
         customerService.changeType(company.getId(), CustomerType.WANDERING);
 
-        rootCompany.get().setCode("2222222");
+        rootCompany.get().setCode("222");
         companyService.update(company);
         entityManager.flush();
     }
@@ -684,3 +686,138 @@ configuration file as follows
 public class JpaHibernateApplication {
 }
 ```
+
+## Expose H2 Database Through Tcp Server To Access From Remote Process
+
+First we need to create a class for the TCP server which will expose the H2 database
+
+```java
+public class H2TCPServer implements InitializingBean, DisposableBean {
+
+    private final Logger logger = LoggerFactory.getLogger(H2TCPServer.class);
+
+    private Object server;
+
+    @Override
+    public void destroy() throws Exception {
+
+        if (server == null) {
+            logger.info("[H2TCPServer] is not running, ignoring stop operation!");
+            return;
+        }
+
+        ReflectionUtils.findMethod(server.getClass(), "stop").invoke(server, new Object[] {});
+
+        logger.info("[H2TCPServer] destroyed ......");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            Class<?> serverClass = Class.forName("org.h2.tools.Server", true, loader);
+            Method createServer = serverClass.getMethod("createTcpServer", String[].class);
+            server =  createServer.invoke(null,
+                    new Object[] { new String[] { "-tcp", "-tcpAllowOthers"} });
+
+            ReflectionUtils.findMethod(server.getClass(), "start").invoke(server, new Object[] {});
+            logger.info("[H2TCPServer] started ......");
+
+        } catch (ClassNotFoundException | LinkageError  e) {
+            throw new RuntimeException("Failed to load and initialize org.h2.tools.Server", e);
+
+        } catch (SecurityException | NoSuchMethodException e) {
+            throw new RuntimeException("Failed to get method org.h2.tools.Server.createTcpServer()", e);
+
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            throw new RuntimeException("Failed to invoke org.h2.tools.Server.createTcpServer()", e);
+
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getTargetException();
+            if (t instanceof SQLException) {
+                throw (SQLException) t;
+            }
+            throw new RuntimeException("Unchecked exception in org.h2.tools.Server.createTcpServer()", t);
+        }
+    }
+}
+```
+
+Then we need to register it as a bean as follows
+
+```
+	@Bean
+	public Object h2TCPServer() {
+		return new H2TCPServer();
+	}
+```
+
+Then we need to put the following config in the properties file
+> spring.datasource.url=jdbc:h2:mem:testdb
+
+So, now we can use the H2 database from another process by using the following url
+
+>jdbc:h2:tcp://localhost:9092/mem:testdb
+
+or
+
+>jdbc:h2:tcp://{IP_ADDRESS}:9092/mem:testdb
+
+## Use Liquibase
+
+To use liquibase we need to add the following dependency to the pom.xml file
+
+```xml
+<dependency>
+	<groupId>org.liquibase</groupId>
+	<artifactId>liquibase-core</artifactId>
+</dependency>
+
+```
+
+Then we need to configure liquibase as follows
+
+```
+@Bean
+public SpringLiquibase liquibase(@Qualifier("asyncTaskExecutor")TaskExecutor taskExecutor, DataSource dataSource, LiquibaseProperties liquibaseProperties) {
+	 SpringLiquibase liquibase = new AsyncSpringLiquibase(taskExecutor, env);
+	 liquibase.setDataSource(dataSource);
+	 liquibase.setChangeLog("classpath:config/liquibase/master.xml");
+	 liquibase.setContexts(liquibaseProperties.getContexts());
+	 liquibase.setDefaultSchema(liquibaseProperties.getDefaultSchema());
+	 liquibase.setDropFirst(liquibaseProperties.isDropFirst());
+	 if (env.acceptsProfiles(Profiles.of("no-liquibase"))) {
+	     liquibase.setShouldRun(false);
+	 } else {
+	     liquibase.setShouldRun(liquibaseProperties.isEnabled());
+	     logger.debug("configuring liquibase");
+	 }
+	 return liquibase;
+}
+```
+
+Then we need to create config/liquibase directory in the resource directory. After that we need to put master.xml in this directory.
+Then we need to register all the change log xml files which are located in changelog directory to master.xml file as follows
+
+```xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    
+    <include file="config/liquibase/changelog/0001_added_entity_company.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0002_added_entity_employee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0003_added_entity_department.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0004_added_entity_profile.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0005_added_entity_constraints_employee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0006_added_entity_customer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0007_added_collection_customer_item_quantity_map.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0008_added_collection_customer_phones.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/0009_added_entity_contact.xml" relativeToChangelogFile="false"/>
+
+</databaseChangeLog>
+
+```  

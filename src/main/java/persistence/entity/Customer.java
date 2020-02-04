@@ -33,19 +33,27 @@ public class Customer extends TenantEntityBase {
     @Setter
     @NotNull(message = "customer type is required")
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
+    @Column(name = "type", nullable = false)
     private CustomerType type;
 
     @NonNull
     @NotNull(message = "company is required")
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name="customer_item_quantity_map", joinColumns =  @JoinColumn(name = "customer_id"))
+    @MapKeyColumn(name="item_name")
+    @Column(name = "item_quantity")
     private Map<String, Integer> itemQuantityMap = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "customer_phones", joinColumns = @JoinColumn(name = "customer_id"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "number", column = @Column(name = "phone_number")),
+            @AttributeOverride(name = "type", column = @Column(name = "number_type"))
+    })
     private Set<PhoneNumber> phones = new HashSet<>();
 
     @Setter
